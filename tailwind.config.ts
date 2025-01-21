@@ -8,6 +8,15 @@ export default {
   ],
   theme: {
     extend: {
+      backgroundColor: {
+        "primary-100": "#00476C",
+      },
+      textColor: {
+        "primary-100": "#00476C",
+      },
+      border: {
+        "primary-100": "#00476C",
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

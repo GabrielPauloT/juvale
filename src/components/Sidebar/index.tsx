@@ -18,7 +18,7 @@ export function Sidebar({ show, setter }: SidebarProps) {
   }
 
   const className =
-    "relative min-h-screen min-w-fit bg-primary-100 w-[250px] transition-[margin-left] ease-in-out duration-500 md:static top-0 bottom-0 left-0 z-40 px-5";
+    "relative min-h-screen min-w-fit bg-primary-100 dark:bg-gray-800 w-[250px] transition-[margin-left] ease-in-out duration-500 md:static top-0 bottom-0 left-0 z-40 px-5";
   const appendClass = show ? " ml-0" : " ml-[-250px] md:ml-0";
 
   const ModalOverlay = () => (

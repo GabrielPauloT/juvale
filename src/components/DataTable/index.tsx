@@ -1,5 +1,5 @@
 import { Icons } from "../Icons";
-// import { Spinner } from "../Spinner";
+import { Spinner } from "../Spinner";
 
 import { DataTableProps } from "./types";
 
@@ -20,7 +20,7 @@ export function DataTable({
   if (!data || data.length === 0) {
     return (
       <div className="m-auto flex h-96 w-auto items-center justify-center">
-        {/* <Spinner /> */}
+        <Spinner />
         <p className="text-gray-500 text-2xl">Nenhum dado encontrado</p>
       </div>
     );
@@ -30,18 +30,18 @@ export function DataTable({
 
   return (
     <div className="flex h-full w-full flex-col p-4">
-      <table className="max-h-full w-full table-auto border-collapse rounded-full border">
+      <table className="max-h-full w-full table-auto border-collapse rounded-full border dark:border-gray-500">
         <thead>
-          <tr className="bg-gray-200">
+          <tr className="bg-gray-200 dark:bg-gray-800">
             {columns.map((column) => (
               <th
                 key={column}
-                className="h-[2.5rem] border-b border-gray-300 px-4 py-2 text-left"
+                className="h-[2.5rem] border-b border-gray-300 dark:border-gray-500 px-4 py-2 text-left"
               >
                 {column.charAt(0).toUpperCase() + column.slice(1)}
               </th>
             ))}
-            <th className="h-[2.5rem] border-b border-gray-300 px-4 py-2">
+            <th className="h-[2.5rem] border-b border-gray-300 dark:border-gray-500 px-4 py-2">
               Ações
             </th>
           </tr>
@@ -50,18 +50,18 @@ export function DataTable({
           {data.map((row, index) => (
             <tr
               key={index + row[columns[index]]}
-              className={index % 2 === 0 ? "bg-gray-100" : ""}
+              className={index % 2 === 0 ? "bg-gray-100 dark:bg-gray-500" : "bg-gray-200 dark:bg-gray-800"}
             >
               {columns.map((column) => (
                 <td
                   key={column}
-                  className="border-b border-gray-300 px-4 py-2 text-left"
+                  className="border-b border-gray-300 dark:border-gray-500 px-4 py-2 text-left"
                 >
                   {row[column]}
                 </td>
               ))}
               {onEditClick && onDeleteClick && onViewClick && (
-                <td className="border-b border-gray-300 px-4 py-2 text-center">
+                <td className="border-b border-gray-300 dark:border-gray-500 px-4 py-2 text-center">
                   <button
                     onClick={() => onEditClick(row)}
                     className="mr-2 text-blue-500 hover:text-blue-700"

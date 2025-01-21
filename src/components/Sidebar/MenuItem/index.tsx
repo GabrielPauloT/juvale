@@ -14,8 +14,8 @@ export function MenuItem({
   const pathname = usePathname();
   const colorClass =
     pathname === route
-      ? "bg-white dark:bg-gray-800 text-primary-100 rounded-md"
-      : "text-white hover:bg-white hover:dark:bg-gray-800 hover:text-primary-100 rounded-md";
+      ? "bg-white dark:bg-gray-600 text-primary-100 dark:text-white rounded-md"
+      : "text-white hover:bg-white hover:dark:bg-gray-600 hover:text-primary-100 hover:dark:text-white rounded-md";
 
   return (
     <Link
