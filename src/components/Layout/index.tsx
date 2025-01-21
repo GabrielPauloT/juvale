@@ -10,10 +10,12 @@ import { Sidebar } from "../Sidebar";
 import { LayoutProps } from "./types";
 
 export function Layout({ pageTitle, children }: LayoutProps) {
-  let titleConcat = "Responsive Sidebar Example";
+  let titleConcat = "Juvale";
   if (pageTitle) titleConcat = pageTitle + " | " + titleConcat;
 
   const [showSidebar, setShowSidebar] = useState(false);
+
+
 
   return (
     <div>
@@ -24,7 +26,7 @@ export function Layout({ pageTitle, children }: LayoutProps) {
         <div className="flex">
           <MenuBarMobile setter={setShowSidebar} />
           <Sidebar show={showSidebar} setter={setShowSidebar} />
-          <div className="flex h-1/2 w-1/2 flex-grow flex-col mt-10">{children}</div>
+          <div className="flex h-1/2 w-1/2 flex-grow flex-col mt-14">{children}</div>
         </div>
       </div>
     </div>

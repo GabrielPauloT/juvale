@@ -109,17 +109,19 @@ export default function FuncionariosPage() {
 
   return (
     <Layout pageTitle="Funcionários">
-      <DataTable
-        data={data}
-        perPage={10}
-        total={10}
-        page={1}
-        onNextPageClick={() => handleNextPage()}
-        onBackPageClick={() => handleBackPage()}
-        onEditClick={handleEdit}
-        onDeleteClick={handleDelete}
-        onViewClick={handleView}
-      />
+      <div className="mt-2">
+        <DataTable
+          data={data}
+          perPage={10}
+          total={10}
+          page={1}
+          onNextPageClick={() => handleNextPage()}
+          onBackPageClick={() => handleBackPage()}
+          onEditClick={handleEdit}
+          onDeleteClick={handleDelete}
+          onViewClick={handleView}
+        />
+      </div>
     </Layout>
   );
 }
