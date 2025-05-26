@@ -8,7 +8,7 @@ import { useCompany } from "@/service/hooks/CompanyQuery";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function DashboardPage() {
-  const { data } = useCompany({ date: new Date().toDateString() });
+  const { data } = useCompany({ date: new Date().toISOString().split("T")[0] });
 
   const funcionariosData = {
     labels: data?.data.map((item) => item.nameCompany) || [],
