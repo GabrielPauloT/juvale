@@ -1,6 +1,8 @@
-import type { Metadata } from "next";
+"use client";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { reactQueryConfig } from "@/config/reactQuery/index";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,10 +14,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Juvale",
-  description: "Created by Gabriel Paulo Tavares da Silva",
-};
+const queryClient = new QueryClient(reactQueryConfig);
 
 export default function RootLayout({
   children,
@@ -24,12 +23,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+      <QueryClientProvider client={queryClient}>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          {children}
+        </body>
+      </QueryClientProvider>
     </html>
   );
 }
-
