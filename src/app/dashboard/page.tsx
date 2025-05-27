@@ -1,69 +1,74 @@
-'use client'
+"use client";
 
-import { Layout } from '@/components/Layout';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Pie } from 'react-chartjs-2';
+import { Layout } from "@/components/Layout";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Pie } from "react-chartjs-2";
+import { useCompany } from "@/service/hooks/CompanyQuery";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function DashboardPage() {
+  const { data } = useCompany({ date: new Date().toISOString().split("T")[0] });
 
   const funcionariosData = {
-    labels: ['ADM-BH', 'C.C 0.27', 'OBRA 244', 'ADM-EMCORP'],
-    datasets: [{
-      data: [65, 35, 10, 15],
-      backgroundColor: [
-        'rgba(37, 99, 235, 0.7)',
-        'rgba(239, 68, 68, 0.7)',
-        'rgba(234, 179, 8, 0.7)',
-        'rgba(34, 197, 94, 0.7)',
-      ],
-      borderColor: [
-        'rgba(37, 99, 235, 1)',
-        'rgba(239, 68, 68, 1)',
-        'rgba(234, 179, 8, 1)',
-        'rgba(34, 197, 94, 1)',
-      ],
-      borderWidth: 1,
-    }],
+    labels: data?.data.map((item) => item.nameCompany) || [],
+    datasets: [
+      {
+        data: data?.data.map((item) => item.totalFuncionariosAtivos) || [],
+        backgroundColor: [
+          "rgba(37, 99, 235, 0.7)",
+          "rgba(239, 68, 68, 0.7)",
+          "rgba(234, 179, 8, 0.7)",
+          "rgba(34, 197, 94, 0.7)",
+        ],
+        borderColor: [
+          "rgba(37, 99, 235, 1)",
+          "rgba(239, 68, 68, 1)",
+          "rgba(234, 179, 8, 1)",
+          "rgba(34, 197, 94, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
   };
 
   const valeRefeicaoData = {
-    labels: ['ADM-BH', 'C.C 0.27', 'OBRA 244', 'ADM-EMCORP'],
-    datasets: [{
-      data: [12000, 8000, 10000, 15000],
-      backgroundColor: [
-        'rgba(34, 197, 94, 0.7)',
-        'rgba(234, 179, 8, 0.7)',
-        'rgba(236, 72, 153, 0.7)',
-        'rgba(168, 85, 247, 0.7)',
-      ],
-      borderColor: [
-        'rgba(34, 197, 94, 1)',
-        'rgba(234, 179, 8, 1)',
-      ],
-      borderWidth: 1,
-    }],
+    labels: data?.data.map((item) => item.nameCompany) || [],
+    datasets: [
+      {
+        data: data?.data.map((item) => item.totalVR) || data?.data.map(() => 0),
+        backgroundColor: [
+          "rgba(34, 197, 94, 0.7)",
+          "rgba(234, 179, 8, 0.7)",
+          "rgba(236, 72, 153, 0.7)",
+          "rgba(168, 85, 247, 0.7)",
+        ],
+        borderColor: ["rgba(34, 197, 94, 1)", "rgba(234, 179, 8, 1)"],
+        borderWidth: 1,
+      },
+    ],
   };
 
   const valeTransporteData = {
-    labels: ['ADM-BH', 'C.C 0.27', 'OBRA 244', 'ADM-EMCORP'],
-    datasets: [{
-      data: [5000, 3000, 10000, 15000],
-      backgroundColor: [
-        'rgba(168, 85, 247, 0.7)',
-        'rgba(236, 72, 153, 0.7)',
-        'rgba(234, 179, 8, 0.7)',
-        'rgba(34, 197, 94, 0.7)',
-      ],
-      borderColor: [
-        'rgba(168, 85, 247, 1)',
-        'rgba(236, 72, 153, 1)',
-        'rgba(234, 179, 8, 1)',
-        'rgba(34, 197, 94, 1)',
-      ],
-      borderWidth: 1,
-    }],
+    labels: data?.data.map((item) => item.nameCompany) || [],
+    datasets: [
+      {
+        data: data?.data.map((item) => item.totalVT) || data?.data.map(() => 0),
+        backgroundColor: [
+          "rgba(168, 85, 247, 0.7)",
+          "rgba(236, 72, 153, 0.7)",
+          "rgba(234, 179, 8, 0.7)",
+          "rgba(34, 197, 94, 0.7)",
+        ],
+        borderColor: [
+          "rgba(168, 85, 247, 1)",
+          "rgba(236, 72, 153, 1)",
+          "rgba(234, 179, 8, 1)",
+          "rgba(34, 197, 94, 1)",
+        ],
+        borderWidth: 1,
+      },
+    ],
   };
 
   return (
@@ -83,10 +88,10 @@ export default function DashboardPage() {
                     plugins: {
                       legend: {
                         labels: {
-                          color: 'rgb(156, 163, 175)'
-                        }
-                      }
-                    }
+                          color: "rgb(156, 163, 175)",
+                        },
+                      },
+                    },
                   }}
                 />
               </div>
@@ -106,10 +111,10 @@ export default function DashboardPage() {
                     plugins: {
                       legend: {
                         labels: {
-                          color: 'rgb(156, 163, 175)'
-                        }
-                      }
-                    }
+                          color: "rgb(156, 163, 175)",
+                        },
+                      },
+                    },
                   }}
                 />
               </div>
@@ -127,10 +132,10 @@ export default function DashboardPage() {
                     plugins: {
                       legend: {
                         labels: {
-                          color: 'rgb(156, 163, 175)'
-                        }
-                      }
-                    }
+                          color: "rgb(156, 163, 175)",
+                        },
+                      },
+                    },
                   }}
                 />
               </div>
