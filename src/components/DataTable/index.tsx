@@ -1,31 +1,39 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useMemo } from "react";
 import { Icons } from "../Icons";
 import { Spinner } from "../Spinner";
 
 import { DataTableProps } from "./types";
 
-export function DataTable({
+export function DataTable<T extends Record<string, any>>({
   page,
   data,
   totalPages = 1,
+  hiddenFields,
   onNextPageClick,
   onBackPageClick,
   onEditClick,
   onDeleteClick,
   onViewClick,
   onRelatorioClick,
-}: DataTableProps) {
+}: DataTableProps<T>) {
+  const columns = useMemo(() => {
+    if (data && data.length > 0 && hiddenFields?.length) {
+      return Object.keys(data[0]).filter((col) => !hiddenFields.includes(col));
+    } else if (data && data.length > 0) {
+      return Object.keys(data?.[0]);
+    }
+    return [];
+  }, [data, hiddenFields]);
+
   if (!data || data.length === 0) {
     return (
-      <div className="m-auto flex h-96 w-auto items-center justify-center">
+      <div className="m-auto flex-row h-96 w-auto items-center justify-center">
         <Spinner />
         <p className="text-gray-500 text-2xl">Nenhum dado encontrado</p>
       </div>
     );
   }
-
-  const columns = Object.keys(data[0]).filter(
-    (col) => col !== "createdAt" && col !== "updatedAt" && col !== "enabled"
-  );
 
   return (
     <div className="flex h-full w-full flex-col p-4">
@@ -48,7 +56,7 @@ export function DataTable({
         <tbody>
           {data.map((row, index) => (
             <tr
-              key={index + row[columns[index]]}
+              key={row.id ?? `${index}-${columns[index]}`}
               className={
                 index % 2 === 0
                   ? "bg-gray-100 dark:bg-gray-600"

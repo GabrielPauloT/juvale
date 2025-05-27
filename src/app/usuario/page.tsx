@@ -4,14 +4,7 @@ import { DataTable } from "@/components/DataTable";
 import { Layout } from "@/components/Layout";
 import { useCallback, useState } from "react";
 import { useUser } from "@/service/hooks/UserQuery";
-
-type Data = {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
-};
+import { UsuarioResponseType } from "@/service/types";
 
 export default function UsuariosPage() {
   const [page, setPage] = useState(1);
@@ -20,25 +13,26 @@ export default function UsuariosPage() {
 
   const { data } = useUser({ page, perPage });
 
-  const handleEdit = useCallback((row: Data) => {
+  const handleEdit = useCallback((row: UsuarioResponseType) => {
     console.log("edit", row);
   }, []);
 
-  const handleDelete = useCallback((row: Data) => {
+  const handleDelete = useCallback((row: UsuarioResponseType) => {
     console.log("delete", row);
   }, []);
 
-  const handleView = useCallback((row: Data) => {
+  const handleView = useCallback((row: UsuarioResponseType) => {
     console.log("view", row);
   }, []);
 
   return (
     <Layout pageTitle="Usuários">
       <div className="mt-2">
-        <DataTable
+        <DataTable<UsuarioResponseType>
           data={data?.data}
           totalPages={data?.totalPages}
           page={page}
+          hiddenFields={["createdAt", "updatedAt"]}
           onNextPageClick={() => setPage((page) => page + 1)}
           onBackPageClick={() => setPage((page) => page - 1)}
           onEditClick={handleEdit}
