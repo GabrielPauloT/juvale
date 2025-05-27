@@ -3,6 +3,7 @@ export * from "react-icons/im";
 export * from "react-icons/io5";
 export * from "react-icons/bs";
 export * from "react-icons/hi2";
+export * from "react-icons/fi";
 
 export { BsTruck, BsGraphUpArrow, BsPlusCircle } from "react-icons/bs";
 export { FiTag, FiPackage } from "react-icons/fi";
