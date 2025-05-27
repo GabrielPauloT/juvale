@@ -1,12 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export type DataTableProps = Readonly<{
-  data: any[] | undefined;
+export type DataTableProps<T> = Readonly<{
+  data: T[] | undefined;
   totalPages: number | undefined;
   page: number;
+  hiddenFields?: (keyof T)[];
   onNextPageClick: () => void;
   onBackPageClick: () => void;
-  onEditClick?: (row: any) => void;
-  onDeleteClick?: (row: any) => void;
-  onViewClick?: (row: any) => void;
-  onRelatorioClick?: (row: any) => void;
+  onEditClick?: (row: T) => void;
+  onDeleteClick?: (row: T) => void;
+  onViewClick?: (row: T) => void;
+  onRelatorioClick?: (row: T) => void;
 }>;
