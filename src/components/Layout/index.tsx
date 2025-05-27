@@ -15,8 +15,6 @@ export function Layout({ pageTitle, children }: LayoutProps) {
 
   const [showSidebar, setShowSidebar] = useState(false);
 
-
-
   return (
     <div>
       <Head>
@@ -26,7 +24,9 @@ export function Layout({ pageTitle, children }: LayoutProps) {
         <div className="flex">
           <MenuBarMobile setter={setShowSidebar} />
           <Sidebar show={showSidebar} setter={setShowSidebar} />
-          <div className="flex h-1/2 w-1/2 flex-grow flex-col mt-14">{children}</div>
+          <div className="flex h-1/2 w-1/2 flex-grow flex-col mt-14 md:mt-0">
+            {children}
+          </div>
         </div>
       </div>
     </div>
