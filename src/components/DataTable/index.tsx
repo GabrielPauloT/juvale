@@ -6,8 +6,7 @@ import { DataTableProps } from "./types";
 export function DataTable({
   page,
   data,
-  perPage,
-  total,
+  totalPages = 1,
   onNextPageClick,
   onBackPageClick,
   onEditClick,
@@ -15,8 +14,6 @@ export function DataTable({
   onViewClick,
   onRelatorioClick,
 }: DataTableProps) {
-  const totalPages = Math.ceil((total ?? 0) / perPage);
-
   if (!data || data.length === 0) {
     return (
       <div className="m-auto flex h-96 w-auto items-center justify-center">
@@ -26,7 +23,9 @@ export function DataTable({
     );
   }
 
-  const columns = Object.keys(data[0]);
+  const columns = Object.keys(data[0]).filter(
+    (col) => col !== "createdAt" && col !== "updatedAt" && col !== "enabled"
+  );
 
   return (
     <div className="flex h-full w-full flex-col p-4">
@@ -50,7 +49,11 @@ export function DataTable({
           {data.map((row, index) => (
             <tr
               key={index + row[columns[index]]}
-              className={index % 2 === 0 ? "bg-gray-100 dark:bg-gray-600" : "bg-gray-200 dark:bg-gray-800"}
+              className={
+                index % 2 === 0
+                  ? "bg-gray-100 dark:bg-gray-600"
+                  : "bg-gray-200 dark:bg-gray-800"
+              }
             >
               {columns.map((column) => (
                 <td

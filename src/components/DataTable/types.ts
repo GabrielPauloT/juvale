@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type DataTableProps = Readonly<{
   data: any[] | undefined;
-  perPage: number;
-  total: number | undefined;
+  totalPages: number | undefined;
   page: number;
   onNextPageClick: () => void;
   onBackPageClick: () => void;

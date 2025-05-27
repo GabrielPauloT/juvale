@@ -51,8 +51,7 @@ export default function RelatorioPage() {
       <div className="mt-2">
         <DataTable
           data={data}
-          perPage={10}
-          total={10}
+          totalPages={10}
           page={1}
           onNextPageClick={() => handleNextPage()}
           onBackPageClick={() => handleBackPage()}
