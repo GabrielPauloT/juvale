@@ -7,7 +7,7 @@ import { MenuBarMobileProps } from "./types";
 
 export default function MenuBarMobile({
   setter,
-  className
+  className,
 }: Readonly<MenuBarMobileProps>) {
   return (
     <div className={className}>
