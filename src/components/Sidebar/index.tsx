@@ -7,13 +7,14 @@ import { useRouter } from "next/navigation";
 import { SidebarMenu } from "./const";
 import { MenuItem } from "./MenuItem";
 import { SidebarProps } from "./types";
+import Cookie from "js-cookie";
 
 export function Sidebar({ show, setter }: SidebarProps) {
   const oldVal = () => (oldVal: boolean) => !oldVal;
   const router = useRouter();
 
   function handleLogin() {
-    // Cookie.remove("auth_token");
+    Cookie.remove("auth_token");
     router.push("/");
   }
 
