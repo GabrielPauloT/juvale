@@ -10,22 +10,6 @@ export const SidebarMenu: MenuProps[] = [
     roles: ["user"],
   },
   {
-    id: 2,
-    setter: () => {},
-    title: "VR",
-    icon: "MdOutlineFoodBank",
-    path: "/vr",
-    roles: ["user"],
-  },
-  {
-    id: 3,
-    setter: () => {},
-    title: "VT",
-    icon: "BsTruck",
-    path: "/vt",
-    roles: ["user"],
-  },
-  {
     id: 4,
     setter: () => {},
     title: "Funcionários",

@@ -2,89 +2,70 @@
 
 import { DataTable } from "@/components/DataTable";
 import { Layout } from "@/components/Layout";
-import { useCallback, useMemo } from "react";
+import { Modal } from "@/components/Modal";
+import { useCallback, useMemo, useState } from "react";
 
 type Data = {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
+  Id: string;
+  Nome: string;
+  Compania: string;
+  Ocupacao: string;
+  VR: number | string;
+  VA: number | string
 };
 
 export default function FuncionariosPage() {
   const data: Data[] = useMemo(() => [
     {
-      id: 1,
-      name: "John Doe",
-      email: "john.doe@example.com",
-      phone: "1234567890",
-      address: "123 Main St, Anytown, USA",
+      Id: '1',
+      Nome: "John Doe",
+      Compania: "Liberty City",
+      Ocupacao: "1234567890",
+      VR: 222.23,
+      VA:226.4,
     },
     {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      phone: "1234567890",
-      address: "123 Main St, Anytown, USA",
+      Id: '2',
+      Nome: "Jane Smith",
+      Compania: "Baldung",
+      Ocupacao: "1234567890",
+      VR: 222.23,
+      VA:226.4,
     },
     {
-      id: 3,
-      name: "John San",
-      email: "john.san@example.com",
-      phone: "1234567890",
-      address: "123 Main St, Anytown, USA",
+      Id: '3',
+      Nome: "John San",
+      Compania: "Atlássia",
+      Ocupacao: "1234567890",
+      VR: 222.23,
+      VA:226.4,
     },
     {
-      id: 4,
-      name: "John Mar",
-      email: "john.mar@example.com",
-      phone: "1234567890",
-      address: "123 Main St, Anytown, USA",
+      Id: '4',
+      Nome: "John Mar",
+      Compania: "Lacta",
+      Ocupacao: "1234567890",
+      VR: 222.23,
+      VA:226.4,
     },
-    {
-      id: 5,
-      name: "John Júnior",
-      email: "john.junior@example.com",
-      phone: "1234567890",
-      address: "123 Main St, Anytown, USA",
-    },
-    {
-      id: 6,
-      name: "John Mílton",
-      email: "john.milton@example.com",
-      phone: "1234567890",
-      address: "123 Main St, Anytown, USA",
-    },
-    {
-      id: 7,
-      name: "John Miniquinha",
-      email: "john.miniquinha@example.com",
-      phone: "1234567890",
-      address: "123 Main St, Anytown, USA",
-    },
-    {
-      id: 8,
-      name: "John Matheus",
-      email: "john.matheus@example.com",
-      phone: "1234567890",
-      address: "123 Main St, Anytown, USA",
-    },
-    {
-      id: 9,
-      name: "John Alves",
-      email: "john.alves@example.com",
-      phone: "1234567890",
-      address: "123 Main St, Anytown, USA",
-    },
-    {
-      id: 10,
-      name: "John Abadia",
-      email: "john.abadia@example.com",
-      phone: "1234567890",
-      address: "123 Main St, Anytown, USA",
-    }
   ], []);
+
+  const [open, setOpen] = useState(false);
+    const [infos, setInfos] = useState<Data>({
+      Id: '{sem Id}',
+      Nome: '{sem Nome}',
+      Compania: '{sem Compania}',
+      Ocupacao: '{sem Ocupacao}',
+      VR: '{sem VR}',
+      VA: '{sem VA}'
+    });
+    const [action, setAction] = useState("");
+  
+    function openModal(infos: Data, action: string) {
+      setOpen(true);
+      setInfos(infos);
+      setAction(action);
+    }
 
   function handleNextPage() {
     console.log("next page");
@@ -94,22 +75,35 @@ export default function FuncionariosPage() {
     console.log("back page");
   }
 
+  function addPdf() {
+    setOpen(true);
+    setAction('AddPDF')
+  }
+
+   function disablePdf() {
+    setOpen(true);
+    setAction('DisablePDF')
+  }
+
   const handleEdit = useCallback((row: Data) => {
-    console.log("edit", row);
+    openModal(row, 'Editar');
   }, []);
 
   const handleDelete = useCallback((row: Data) => {
-    console.log("delete", row);
-  }, []);
-
-  const handleView = useCallback((row: Data) => {
-    console.log("view", row);
+    openModal(row, 'Deletar');
   }, []);
 
 
   return (
     <Layout pageTitle="Funcionários">
-      <div className="mt-2">
+
+      <Modal open={open} onClose={() => setOpen(false)} infos={infos} action={action} />
+    
+      <div style={{marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
+      <div style={{width:'97%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px'}}>
+        <button style={{padding: '5px', backgroundColor: 'green', color: 'white'}} onClick={addPdf}>Adicionar Funcionários</button>
+        <button style={{padding: '5px', backgroundColor: 'red', color: 'white'}} onClick={disablePdf}>Desativar Funcionários</button>
+      </div>
         <DataTable
           data={data}
           perPage={10}
@@ -119,7 +113,6 @@ export default function FuncionariosPage() {
           onBackPageClick={() => handleBackPage()}
           onEditClick={handleEdit}
           onDeleteClick={handleDelete}
-          onViewClick={handleView}
         />
       </div>
     </Layout>

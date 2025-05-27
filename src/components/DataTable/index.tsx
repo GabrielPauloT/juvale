@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Icons } from "../Icons";
 import { Spinner } from "../Spinner";
 
@@ -12,9 +13,24 @@ export function DataTable({
   onBackPageClick,
   onEditClick,
   onDeleteClick,
-  onViewClick,
-  onRelatorioClick,
+  // onViewClick,
+  // onRelatorioClick,
 }: DataTableProps) {
+
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 1160);
+    };
+    
+    handleResize();
+    
+    window.addEventListener('resize', handleResize);
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
   const totalPages = Math.ceil((total ?? 0) / perPage);
 
   if (!data || data.length === 0) {
@@ -26,10 +42,115 @@ export function DataTable({
     );
   }
 
+
   const columns = Object.keys(data[0]);
 
+   if (isMobile) {
+    return (
+      <div style={{ padding: "1rem", width: "100%" }}>
+        {data.map((row, index) => (
+          <div 
+            key={index} 
+            style={{
+              border: "1px solid #4B5563",
+              borderRadius: "0.5rem",
+              padding: "1rem",
+              marginBottom: "1rem",
+              backgroundColor: index % 2 === 0 ? "#F3F4F6" : "#E5E7EB",
+            }}
+          >
+            {columns.map((column) => (
+              <div key={column} style={{ marginBottom: "0.5rem" }}>
+                <strong>{column.charAt(0).toUpperCase() + column.slice(1)}:</strong> {row[column]}
+              </div>
+            ))}
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "1rem" }}>
+              {onEditClick && (
+                <button
+                  onClick={() => onEditClick(row)}
+                  style={{
+                    color: "#3B82F6",
+                    cursor: "pointer",
+                    background: "none",
+                    border: "none",
+                  }}
+                >
+                  <Icons name="MdEdit" size={20} />
+                </button>
+              )}
+              {onDeleteClick && (
+                <button
+                  onClick={() => onDeleteClick(row)}
+                  style={{
+                    color: "#EF4444",
+                    cursor: "pointer",
+                    background: "none",
+                    border: "none",
+                  }}
+                >
+                  <Icons name="MdDelete" size={20} />
+                </button>
+              )}
+              {/* {onRelatorioClick && (
+                <button
+                  onClick={() => onRelatorioClick(row)}
+                  style={{
+                    color: "#3B82F6",
+                    cursor: "pointer",
+                    background: "none",
+                    border: "none",
+                  }}
+                >
+                  <Icons name="MdOutlineSimCardDownload" size={20} />
+                </button>
+              )} */}
+            </div>
+          </div>
+        ))}
+        <div style={{ marginTop: "1rem", display: "flex", justifyContent: "flex-end" }}>
+          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+            {totalPages > 1 && page > 1 && (
+              <button
+                onClick={onBackPageClick}
+                style={{
+                  borderRadius: "0.25rem",
+                  backgroundColor: "#2563EB",
+                  padding: "0.25rem 1rem",
+                  fontWeight: "bold",
+                  color: "white",
+                  cursor: "pointer",
+                }}
+              >
+                <Icons name="MdNavigateBefore" size={20} />
+              </button>
+            )}
+            <p>
+              Página {page} de {totalPages}
+            </p>
+            {page < totalPages && (
+              <button
+                onClick={onNextPageClick}
+                style={{
+                  borderRadius: "0.25rem",
+                  backgroundColor: "#2563EB",
+                  padding: "0.25rem 1rem",
+                  fontWeight: "bold",
+                  color: "white",
+                  cursor: "pointer",
+                }}
+              >
+                <Icons name="MdNavigateNext" size={20} />
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+
   return (
-    <div className="flex h-full w-full flex-col p-4">
+   <div className="flex h-full w-full flex-col p-4">
       <table className="max-h-full w-full table-auto border-collapse rounded-full border dark:border-gray-600">
         <thead>
           <tr className="bg-gray-200 dark:bg-gray-800">
@@ -60,7 +181,7 @@ export function DataTable({
                   {row[column]}
                 </td>
               ))}
-              {onEditClick && onDeleteClick && onViewClick && (
+              {(onEditClick && onDeleteClick) && (
                 <td className="border-b border-gray-300 dark:border-gray-600 px-4 py-2 text-center">
                   <button
                     onClick={() => onEditClick(row)}
@@ -74,15 +195,15 @@ export function DataTable({
                   >
                     <Icons name="MdDelete" size={20} />
                   </button>
-                  <button
+                  {/* <button
                     onClick={() => onViewClick(row)}
                     className="text-green-500 hover:text-green-700"
                   >
                     <Icons name="MdVisibility" size={20} />
-                  </button>
+                  </button> */}
                 </td>
               )}
-              {onRelatorioClick && (
+              {/* {onRelatorioClick && (
                 <td className="border-b border-gray-300 px-4 py-2 text-center">
                   <button
                     onClick={() => onRelatorioClick(row)}
@@ -91,7 +212,7 @@ export function DataTable({
                     <Icons name="MdOutlineSimCardDownload" size={20} />
                   </button>
                 </td>
-              )}
+              )} */}
             </tr>
           ))}
         </tbody>
