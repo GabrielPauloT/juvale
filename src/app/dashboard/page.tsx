@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
@@ -8,7 +9,11 @@ import { useCompany } from "@/service/hooks/CompanyQuery";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function DashboardPage() {
-  const { data } = useCompany({ date: new Date().toISOString().split("T")[0] });
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+
+  const { data } = useCompany({ date: selectedDate });
 
   const funcionariosData = {
     labels: data?.data.map((item) => item.nameCompany) || [],
@@ -36,7 +41,7 @@ export default function DashboardPage() {
     labels: data?.data.map((item) => item.nameCompany) || [],
     datasets: [
       {
-        data: data?.data.map((item) => item.totalVR) || data?.data.map(() => 0),
+        data: data?.data.map((item) => item.totalVR) || [],
         backgroundColor: [
           "rgba(34, 197, 94, 0.7)",
           "rgba(234, 179, 8, 0.7)",
@@ -53,7 +58,7 @@ export default function DashboardPage() {
     labels: data?.data.map((item) => item.nameCompany) || [],
     datasets: [
       {
-        data: data?.data.map((item) => item.totalVT) || data?.data.map(() => 0),
+        data: data?.data.map((item) => item.totalVT) || [],
         backgroundColor: [
           "rgba(168, 85, 247, 0.7)",
           "rgba(236, 72, 153, 0.7)",
@@ -74,6 +79,20 @@ export default function DashboardPage() {
   return (
     <Layout pageTitle="Dashboard">
       <div className="p-6">
+        <div className="flex justify-center mb-5">
+          <div className="flex items-center gap-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 shadow-md">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Selecione a data:
+            </label>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
         <div className="flex flex-col gap-6">
           <div className="w-full flex justify-center">
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 w-full">

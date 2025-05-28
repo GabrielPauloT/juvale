@@ -1,20 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo} from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Icons } from "../Icons";
 import { Spinner } from "../Spinner";
 
 import { DataTableProps } from "./types";
 
-export function DataTable({
+export function DataTable<T extends Record<string, any>>({
   page,
   data,
-  perPage,
-  total,
+  totalPages = 1,
+  hiddenFields,
   onNextPageClick,
   onBackPageClick,
   onEditClick,
   onDeleteClick,
   onAddAbsentClick,
-}: DataTableProps) {
+  onRelatorioClick,
+}: DataTableProps<T>) {
 
   const [isMobile, setIsMobile] = useState(false);
   
@@ -30,19 +32,23 @@ export function DataTable({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   
-  const totalPages = Math.ceil((total ?? 0) / perPage);
+  const columns = useMemo(() => {
+    if (data && data.length > 0 && hiddenFields?.length) {
+      return Object.keys(data[0]).filter((col) => !hiddenFields.includes(col));
+    } else if (data && data.length > 0) {
+      return Object.keys(data?.[0]);
+    }
+    return [];
+  }, [data, hiddenFields]);
 
   if (!data || data.length === 0) {
     return (
-      <div className="m-auto flex h-96 w-auto items-center justify-center">
+      <div className="m-auto flex-row h-96 w-auto items-center justify-center">
         <Spinner />
         <p className="text-gray-500 text-2xl">Nenhum dado encontrado</p>
       </div>
     );
   }
-
-
-  const columns = Object.keys(data[0]);
 
    if (isMobile) {
     return (
@@ -105,6 +111,16 @@ export function DataTable({
                   </button>
                 )
               }
+              {onRelatorioClick && (
+                <td className="border-b border-gray-300 px-4 py-2 text-center">
+                  <button
+                    onClick={() => onRelatorioClick(row)}
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    <Icons name="MdOutlineSimCardDownload" size={20} />
+                  </button>
+                </td>
+              )}
             </div>
           </div>
         ))}
@@ -176,8 +192,12 @@ export function DataTable({
         <tbody>
           {data.map((row, index) => (
             <tr
-              key={index + row[columns[index]]}
-              className={index % 2 === 0 ? "bg-gray-100 dark:bg-gray-600" : "bg-gray-200 dark:bg-gray-800"}
+              key={row.id ?? `${index}-${columns[index]}`}
+              className={
+                index % 2 === 0
+                  ? "bg-gray-100 dark:bg-gray-600"
+                  : "bg-gray-200 dark:bg-gray-800"
+              }
             >
               {columns.map((column) => (
                 <td
@@ -212,6 +232,17 @@ export function DataTable({
                   >
                     <Icons name="BsPersonExclamation" size={20} />
                   </button>
+                  )}
+
+                  {onRelatorioClick && (
+                    <td className="border-b border-gray-300 px-4 py-2 text-center">
+                      <button
+                        onClick={() => onRelatorioClick(row)}
+                        className="text-blue-500 hover:text-blue-700"
+                      >
+                        <Icons name="MdOutlineSimCardDownload" size={20} />
+                      </button>
+                    </td>
                   )}
                 </td>
             </tr>

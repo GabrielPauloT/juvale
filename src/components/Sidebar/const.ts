@@ -15,7 +15,7 @@ export const SidebarMenu: MenuProps[] = [
     title: "Funcionários",
     icon: "BsFilePerson",
     path: "/funcionario",
-    roles: ["admin"],
+    roles: ["user"],
   },
   {
     id: 5,
