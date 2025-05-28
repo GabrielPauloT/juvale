@@ -10,4 +10,5 @@ export type DataTableProps = Readonly<{
   onDeleteClick?: (row: any) => void;
   onViewClick?: (row: any) => void;
   onRelatorioClick?: (row: any) => void;
+  onAddAbsentClick?: (row: any) => void;
 }>;

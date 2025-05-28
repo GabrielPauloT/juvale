@@ -1,8 +1,9 @@
 "use client";
 
 import { DataTable } from "@/components/DataTable";
+import { Icons } from "@/components/Icons";
 import { Layout } from "@/components/Layout";
-import { Modal } from "@/components/Modal";
+import { ModalBase } from "@/components/ModalBase";
 import { useCallback, useMemo, useState } from "react";
 
 type Data = {
@@ -50,22 +51,11 @@ export default function FuncionariosPage() {
     },
   ], []);
 
-  const [open, setOpen] = useState(false);
-    const [infos, setInfos] = useState<Data>({
-      Id: '{sem Id}',
-      Nome: '{sem Nome}',
-      Compania: '{sem Compania}',
-      Ocupacao: '{sem Ocupacao}',
-      VR: '{sem VR}',
-      VA: '{sem VA}'
-    });
-    const [action, setAction] = useState("");
-  
-    function openModal(infos: Data, action: string) {
-      setOpen(true);
-      setInfos(infos);
-      setAction(action);
-    }
+  const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [openModalEdit, setOpenModalEdit] = useState(false);
+  const [openModalAddPdf, setOpenModalAddPdf] = useState(false);
+  const [openModalAbsent, setOpenModalAbsent] = useState(false);
+  const [row, setRow] = useState<Data>();
 
   function handleNextPage() {
     console.log("next page");
@@ -75,34 +65,149 @@ export default function FuncionariosPage() {
     console.log("back page");
   }
 
-  function addPdf() {
-    setOpen(true);
-    setAction('AddPDF')
-  }
-
-   function disablePdf() {
-    setOpen(true);
-    setAction('DisablePDF')
+  function handleAddPdf() {
+    setOpenModalAddPdf(true)
   }
 
   const handleEdit = useCallback((row: Data) => {
-    openModal(row, 'Editar');
+    setOpenModalEdit(true);
+    setRow(row)
   }, []);
 
   const handleDelete = useCallback((row: Data) => {
-    openModal(row, 'Deletar');
+    setOpenModalDelete(true)
+    setRow(row)
+  }, []);
+
+  const handleAddAbsent = useCallback((row: Data) => {
+    setOpenModalAbsent(true)
+    setRow(row)
   }, []);
 
 
   return (
     <Layout pageTitle="Funcionários">
 
-      <Modal open={open} onClose={() => setOpen(false)} infos={infos} action={action} />
+      <ModalBase 
+        title="Deletar" 
+        actionButton="Deletar" 
+        open={openModalDelete} 
+        onClose={() => setOpenModalDelete(false)}
+        onSend={() => console.log('ok')}
+      > 
+          <p className="text-base mb-6">
+            Tem certeza que deseja deletar o registro de{" "}
+            {row?.Nome ? row.Nome : "{sem nome}"}
+          </p>
+      </ModalBase>
+
+      <ModalBase 
+        title="Editar" 
+        actionButton="Editar" 
+        open={openModalEdit} 
+        onClose={() => setOpenModalEdit(false)}
+        onSend={() => console.log('ok')}
+      > 
+          <div className="flex flex-col gap-4">
+            <div className="w-full flex flex-col gap-1">
+              <p className="text-sm">Nome:</p>
+              <input
+                type="text"
+                placeholder="Nome"
+                className="border border-black p-1 rounded-sm outline-none"
+                defaultValue={row?.Nome ? row.Nome : "{sem Nome}"}
+              />
+            </div>
+            <div className="w-full flex flex-col gap-1">
+              <p className="text-sm">Compania:</p>
+              <input
+                type="text"
+                placeholder="Compania"
+                className="border border-black p-1 rounded-sm outline-none"
+                defaultValue={row?.Compania ? row.Compania : "{sem Compania}"}
+              />
+            </div>
+            <div className="w-full flex flex-col gap-1">
+              <p className="text-sm">Ocupação:</p>
+              <input
+                type="text"
+                placeholder="Ocupação"
+                className="border border-black p-1 rounded-sm outline-none"
+                defaultValue={row?.Ocupacao ? row.Ocupacao : "{sem Ocupação}"}
+              />
+            </div>
+            <div className="w-full flex flex-col gap-1">
+              <p className="text-sm">VR:</p>
+              <input
+                type="text"
+                placeholder="VR"
+                className="border border-black p-1 rounded-sm outline-none"
+                defaultValue={row?.VR ? row.VR : "{sem VR}"}
+              />
+            </div>
+            <div className="w-full flex flex-col gap- pb-6">
+              <p className="text-sm">VA:</p>
+              <input
+                type="text"
+                placeholder="VA"
+                className="border border-black p-1 rounded-sm outline-none"
+                defaultValue={row?.VA ? row.VA : "{sem VA}"}
+              />
+            </div>
+          </div>
+      </ModalBase>
+
+      <ModalBase 
+        title="Adicionar PDF" 
+        open={openModalAddPdf} 
+        onClose={() => setOpenModalAddPdf(false)}
+        onSend={() => console.log('ok')}
+      > 
+          <div>
+            <input
+              type="file"
+              accept="application/pdf"
+              className="mb-4 p-2 border rounded w-full"
+            />
+          </div>
+          <div className="flex flex-col items-start justify-start gap-2">
+            <div>
+              <input type="radio" name="pdfType" value="tipo1" />{" "}
+              <span>Adicionar funcionário</span>
+            </div>
+            <div>
+              <input type="radio" name="pdfType" value="tipo2" />{" "}
+              <span>Desativar funcionário</span>
+            </div>
+          </div>
+      </ModalBase>
+
+      <ModalBase 
+        title="Adicionar Faltas" 
+        open={openModalAbsent} 
+        onClose={() => setOpenModalAbsent(false)}
+        onSend={() => console.log('ok')}
+      > 
+          <div className="mb-3">
+            <input
+              type="date"
+              className="border border-black p-1 w-full"
+            />
+          </div>
+          <div className="mb-3">
+            <input type="checkbox" name="pdfType" value="tipo1" />{" "}
+            <span>Possui atestado</span>
+          </div>
+      </ModalBase>
     
       <div style={{marginTop: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
       <div style={{width:'97%', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px'}}>
-        <button style={{padding: '5px', backgroundColor: 'green', color: 'white'}} onClick={addPdf}>Adicionar Funcionários</button>
-        <button style={{padding: '5px', backgroundColor: 'red', color: 'white'}} onClick={disablePdf}>Desativar Funcionários</button>
+        <button style={{padding: '8px', backgroundColor: 'green', color: 'white', borderRadius: '8px'}} onClick={handleAddPdf}>
+          <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px'}}>
+            <p style={{fontWeight: 'bold'}}>PDF</p>
+            <Icons name="MdOutlineAddCircle" size={20} />
+          </div>
+        </button>
       </div>
         <DataTable
           data={data}
@@ -113,6 +218,7 @@ export default function FuncionariosPage() {
           onBackPageClick={() => handleBackPage()}
           onEditClick={handleEdit}
           onDeleteClick={handleDelete}
+          onAddAbsentClick={handleAddAbsent}
         />
       </div>
     </Layout>

@@ -13,8 +13,7 @@ export function DataTable({
   onBackPageClick,
   onEditClick,
   onDeleteClick,
-  // onViewClick,
-  // onRelatorioClick,
+  onAddAbsentClick,
 }: DataTableProps) {
 
   const [isMobile, setIsMobile] = useState(false);
@@ -91,19 +90,21 @@ export function DataTable({
                   <Icons name="MdDelete" size={20} />
                 </button>
               )}
-              {/* {onRelatorioClick && (
-                <button
-                  onClick={() => onRelatorioClick(row)}
-                  style={{
-                    color: "#3B82F6",
+              {
+                onAddAbsentClick && (
+                  <button
+                    onClick={() => onAddAbsentClick(row)}
+                    style={{
+                    color: "orange",
                     cursor: "pointer",
                     background: "none",
                     border: "none",
                   }}
-                >
-                  <Icons name="MdOutlineSimCardDownload" size={20} />
-                </button>
-              )} */}
+                  >
+                    <Icons name="BsPersonExclamation" size={20} />
+                  </button>
+                )
+              }
             </div>
           </div>
         ))}
@@ -151,6 +152,11 @@ export function DataTable({
 
   return (
    <div className="flex h-full w-full flex-col p-4">
+    <input 
+      type="text" 
+      style={{ width: "100%", padding: "0.5rem", borderRadius: "0.25rem", borderBottom: "1px solid #4B5563", outline: 'none', backgroundColor: 'transparent', marginBottom: '1%' }}
+      placeholder="Pesquisar..."
+    />
       <table className="max-h-full w-full table-auto border-collapse rounded-full border dark:border-gray-600">
         <thead>
           <tr className="bg-gray-200 dark:bg-gray-800">
@@ -181,38 +187,33 @@ export function DataTable({
                   {row[column]}
                 </td>
               ))}
-              {(onEditClick && onDeleteClick) && (
                 <td className="border-b border-gray-300 dark:border-gray-600 px-4 py-2 text-center">
-                  <button
+                  {onEditClick && (<button
                     onClick={() => onEditClick(row)}
                     className="mr-2 text-blue-500 hover:text-blue-700"
                   >
                     <Icons name="MdEdit" size={20} />
-                  </button>
-                  <button
+                  </button>)
+                  }
+
+                  {onDeleteClick && (
+                    <button
                     onClick={() => onDeleteClick(row)}
                     className="mr-2 text-red-500 hover:text-red-700"
                   >
                     <Icons name="MdDelete" size={20} />
                   </button>
-                  {/* <button
-                    onClick={() => onViewClick(row)}
+                  )}
+
+                  {onAddAbsentClick && (
+                    <button
+                    onClick={() => onAddAbsentClick(row)}
                     className="text-green-500 hover:text-green-700"
                   >
-                    <Icons name="MdVisibility" size={20} />
-                  </button> */}
-                </td>
-              )}
-              {/* {onRelatorioClick && (
-                <td className="border-b border-gray-300 px-4 py-2 text-center">
-                  <button
-                    onClick={() => onRelatorioClick(row)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    <Icons name="MdOutlineSimCardDownload" size={20} />
+                    <Icons name="BsPersonExclamation" size={20} />
                   </button>
+                  )}
                 </td>
-              )} */}
             </tr>
           ))}
         </tbody>
