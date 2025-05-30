@@ -4,7 +4,9 @@ export type DataTableProps<T> = Readonly<{
   data: T[] | undefined;
   totalPages: number | undefined;
   page: number;
-  hiddenFields?: (keyof T)[];
+  hiddenFields?: (keyof T | string)[];
+  onlyFields?: (keyof T | string)[];
+  columnLabels?: Record<string, string>;
   onNextPageClick: () => void;
   onBackPageClick: () => void;
   onEditClick?: (row: T) => void;
@@ -14,5 +16,7 @@ export type DataTableProps<T> = Readonly<{
   onAddAbsentClick?: (row: T) => void;
   onAddTicketClick?: (row: T) => void;
   searchValue?: string;
-  onChangeSearchValue?: (input: { target: { value: SetStateAction<string>; }; }) => void;
+  onChangeSearchValue?: (input: {
+    target: { value: SetStateAction<string> };
+  }) => void;
 }>;
