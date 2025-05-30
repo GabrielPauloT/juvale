@@ -11,6 +11,7 @@ export { RiShoppingBag2Line, RiUserSettingsLine } from "react-icons/ri";
 export { TbTruck, TbClipboardList, TbPlaylistX } from "react-icons/tb";
 export { BsSend } from "react-icons/bs";
 export { SlSettings } from "react-icons/sl";
+export { FaBusSimple } from "react-icons/fa6";
 export { AiOutlineShoppingCart } from "react-icons/ai";
 export { RiDeleteBin6Line } from "react-icons/ri";
 export { AiOutlineCalculator } from "react-icons/ai";
