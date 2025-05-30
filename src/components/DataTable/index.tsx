@@ -159,7 +159,7 @@ export function DataTable<T extends Record<string, any>>({
                     border: "none",
                   }}
                 >
-                  <Icons name="BsTruck" size={20} />
+                  <Icons name="FaBusSimple" size={20} />
                 </button>
               )}
               {onRelatorioClick && (
@@ -299,31 +299,28 @@ export function DataTable<T extends Record<string, any>>({
                 {onAddAbsentClick && (
                   <button
                     onClick={() => onAddAbsentClick(row)}
-                    className="text-green-500 hover:text-green-700"
+                    className="mr-2 text-green-500 hover:text-green-700"
                   >
                     <Icons name="BsPersonExclamation" size={20} />
                   </button>
                 )}
 
                 {onRelatorioClick && (
-                  <td className="border-b border-gray-300 px-4 py-2 text-center">
                     <button
                       onClick={() => onRelatorioClick(row)}
-                      className="text-blue-500 hover:text-blue-700"
+                      className="mr-2 text-green-500 hover:text-blue-700"
                     >
                       <Icons name="MdOutlineSimCardDownload" size={20} />
                     </button>
-                  </td>
                 )}
+                
                 {onAddTicketClick && (
-                  <td className="border-b border-gray-300 px-4 py-2 text-center">
                     <button
                       onClick={() => onAddTicketClick(row)}
-                      className="text-blue-500 hover:text-blue-700"
+                      className="text-green-500 hover:text-blue-700"
                     >
-                      <Icons name="BsTruck" size={20} />
+                      <Icons name="FaBusSimple" size={20} />
                     </button>
-                  </td>
                 )}
               </td>
             </tr>
