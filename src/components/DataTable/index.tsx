@@ -70,55 +70,40 @@ export function DataTable<T extends Record<string, any>>({
 
   if (isMobile) {
     return (
-      <div style={{ padding: "1rem", width: "100%" }}>
+      <div className="w-full px-4">
         <input
           type="text"
-          style={{
-            width: "100%",
-            padding: "0.5rem",
-            borderRadius: "0.25rem",
-            borderBottom: "1px solid #4B5563",
-            outline: "none",
-            backgroundColor: "transparent",
-            marginBottom: "1%",
-          }}
+          className="w-full rounded-md border border-gray-400 bg-transparent px-3 py-2 text-sm text-black placeholder:text-gray-500 focus:outline-none dark:border-gray-600 dark:text-white dark:placeholder:text-gray-400"
           placeholder="Pesquisar..."
           value={searchValue}
           onChange={onChangeSearchValue}
         />
+
         {data.map((row, index) => (
           <div
             key={index}
-            style={{
-              border: "1px solid #4B5563",
-              borderRadius: "0.5rem",
-              padding: "1rem",
-              marginBottom: "1rem",
-              backgroundColor: index % 2 === 0 ? "#F3F4F6" : "#E5E7EB",
-            }}
+            className={`mt-4 rounded-xl border p-4 shadow-sm dark:border-gray-600 ${
+              index % 2 === 0
+                ? "bg-gray-100 dark:bg-gray-800"
+                : "bg-gray-200 dark:bg-gray-700"
+            }`}
           >
             {columns.map((column) => (
-              <div key={column} style={{ marginBottom: "0.5rem" }}>
-                <strong>{getLabel(column)}:</strong>{" "}
-                {String(getValue(row, column))}
+              <div key={column} className="mb-2 text-sm">
+                <span className="font-semibold text-gray-700 dark:text-gray-300">
+                  {getLabel(column)}:
+                </span>{" "}
+                <span className="text-gray-800 dark:text-gray-100">
+                  {String(getValue(row, column))}
+                </span>
               </div>
             ))}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                gap: "1rem",
-              }}
-            >
+
+            <div className="mt-4 flex justify-end gap-3">
               {onEditClick && (
                 <button
                   onClick={() => onEditClick(row)}
-                  style={{
-                    color: "#3B82F6",
-                    cursor: "pointer",
-                    background: "none",
-                    border: "none",
-                  }}
+                  className="text-blue-500 hover:text-blue-600"
                 >
                   <Icons name="MdEdit" size={20} />
                 </button>
@@ -126,12 +111,7 @@ export function DataTable<T extends Record<string, any>>({
               {onDeleteClick && (
                 <button
                   onClick={() => onDeleteClick(row)}
-                  style={{
-                    color: "#EF4444",
-                    cursor: "pointer",
-                    background: "none",
-                    border: "none",
-                  }}
+                  className="text-red-500 hover:text-red-600"
                 >
                   <Icons name="MdDelete" size={20} />
                 </button>
@@ -139,12 +119,7 @@ export function DataTable<T extends Record<string, any>>({
               {onAddAbsentClick && (
                 <button
                   onClick={() => onAddAbsentClick(row)}
-                  style={{
-                    color: "orange",
-                    cursor: "pointer",
-                    background: "none",
-                    border: "none",
-                  }}
+                  className="text-yellow-500 hover:text-yellow-600"
                 >
                   <Icons name="BsPersonExclamation" size={20} />
                 </button>
@@ -152,12 +127,7 @@ export function DataTable<T extends Record<string, any>>({
               {onAddTicketClick && (
                 <button
                   onClick={() => onAddTicketClick(row)}
-                  style={{
-                    color: "blue",
-                    cursor: "pointer",
-                    background: "none",
-                    border: "none",
-                  }}
+                  className="text-green-500 hover:text-green-600"
                 >
                   <Icons name="FaBusSimple" size={20} />
                 </button>
@@ -165,12 +135,7 @@ export function DataTable<T extends Record<string, any>>({
               {onRelatorioClick && (
                 <button
                   onClick={() => onRelatorioClick(row)}
-                  style={{
-                    color: "#3B82F6",
-                    cursor: "pointer",
-                    background: "none",
-                    border: "none",
-                  }}
+                  className="text-cyan-600 hover:text-cyan-700"
                 >
                   <Icons name="MdOutlineSimCardDownload" size={20} />
                 </button>
@@ -178,43 +143,24 @@ export function DataTable<T extends Record<string, any>>({
             </div>
           </div>
         ))}
-        <div
-          style={{
-            marginTop: "1rem",
-            display: "flex",
-            justifyContent: "flex-end",
-          }}
-        >
-          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+
+        <div className="mt-6 flex justify-end">
+          <div className="flex items-center gap-4">
             {totalPages > 1 && page > 1 && (
               <button
                 onClick={onBackPageClick}
-                style={{
-                  borderRadius: "0.25rem",
-                  backgroundColor: "#2563EB",
-                  padding: "0.25rem 1rem",
-                  fontWeight: "bold",
-                  color: "white",
-                  cursor: "pointer",
-                }}
+                className="rounded bg-blue-600 px-3 py-1 font-semibold text-white hover:bg-blue-700"
               >
                 <Icons name="MdNavigateBefore" size={20} />
               </button>
             )}
-            <p>
+            <span className="text-sm text-gray-700 dark:text-gray-300">
               Página {page} de {totalPages}
-            </p>
+            </span>
             {page < totalPages && (
               <button
                 onClick={onNextPageClick}
-                style={{
-                  borderRadius: "0.25rem",
-                  backgroundColor: "#2563EB",
-                  padding: "0.25rem 1rem",
-                  fontWeight: "bold",
-                  color: "white",
-                  cursor: "pointer",
-                }}
+                className="rounded bg-blue-600 px-3 py-1 font-semibold text-white hover:bg-blue-700"
               >
                 <Icons name="MdNavigateNext" size={20} />
               </button>
@@ -306,21 +252,21 @@ export function DataTable<T extends Record<string, any>>({
                 )}
 
                 {onRelatorioClick && (
-                    <button
-                      onClick={() => onRelatorioClick(row)}
-                      className="mr-2 text-green-500 hover:text-blue-700"
-                    >
-                      <Icons name="MdOutlineSimCardDownload" size={20} />
-                    </button>
+                  <button
+                    onClick={() => onRelatorioClick(row)}
+                    className="mr-2 text-green-500 hover:text-blue-700"
+                  >
+                    <Icons name="MdOutlineSimCardDownload" size={20} />
+                  </button>
                 )}
-                
+
                 {onAddTicketClick && (
-                    <button
-                      onClick={() => onAddTicketClick(row)}
-                      className="text-green-500 hover:text-blue-700"
-                    >
-                      <Icons name="FaBusSimple" size={20} />
-                    </button>
+                  <button
+                    onClick={() => onAddTicketClick(row)}
+                    className="text-green-500 hover:text-blue-700"
+                  >
+                    <Icons name="FaBusSimple" size={20} />
+                  </button>
                 )}
               </td>
             </tr>
