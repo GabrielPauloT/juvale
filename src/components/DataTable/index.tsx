@@ -151,7 +151,7 @@ export function DataTable<T extends Record<string, any>>({
                 {onRelatorioClick && (
                   <button
                     onClick={() => onRelatorioClick(row)}
-                    className="text-cyan-600 hover:text-cyan-700"
+                    className="text-green-500 hover:text-blue-700"
                   >
                     <Icons name="MdOutlineSimCardDownload" size={20} />
                   </button>
@@ -160,29 +160,31 @@ export function DataTable<T extends Record<string, any>>({
             </div>
           ))}
 
-          <div className="mt-6 flex justify-end">
-            <div className="flex items-center gap-4">
-              {totalPages > 1 && page > 1 && (
-                <button
-                  onClick={onBackPageClick}
-                  className="rounded bg-blue-600 px-3 py-1 font-semibold text-white hover:bg-blue-700"
-                >
-                  <Icons name="MdNavigateBefore" size={20} />
-                </button>
-              )}
-              <span className="text-sm text-gray-700 dark:text-gray-300">
-                Página {page} de {totalPages}
-              </span>
-              {page < totalPages && (
-                <button
-                  onClick={onNextPageClick}
-                  className="rounded bg-blue-600 px-3 py-1 font-semibold text-white hover:bg-blue-700"
-                >
-                  <Icons name="MdNavigateNext" size={20} />
-                </button>
-              )}
+          {onNextPageClick && onBackPageClick && (
+            <div className="mt-6 flex justify-end">
+              <div className="flex items-center gap-4">
+                {totalPages > 1 && page > 1 && (
+                  <button
+                    onClick={onBackPageClick}
+                    className="rounded bg-blue-600 px-3 py-1 font-semibold text-white hover:bg-blue-700"
+                  >
+                    <Icons name="MdNavigateBefore" size={20} />
+                  </button>
+                )}
+                <span className="text-sm text-gray-700 dark:text-gray-300">
+                  Página {page} de {totalPages}
+                </span>
+                {page < totalPages && (
+                  <button
+                    onClick={onNextPageClick}
+                    className="rounded bg-blue-600 px-3 py-1 font-semibold text-white hover:bg-blue-700"
+                  >
+                    <Icons name="MdNavigateNext" size={20} />
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       ) : (
         <>
@@ -267,29 +269,31 @@ export function DataTable<T extends Record<string, any>>({
             </tbody>
           </table>
 
-          <div className="mt-4 flex justify-end">
-            <div className="flex gap-4">
-              {totalPages > 1 && page > 1 && (
-                <button
-                  onClick={onBackPageClick}
-                  className="rounded bg-blue-600 px-4 py-0 font-bold text-white hover:bg-primary-100"
-                >
-                  <Icons name="MdNavigateBefore" size={20} />
-                </button>
-              )}
-              <p>
-                Página {page} de {totalPages}
-              </p>
-              {page < totalPages && (
-                <button
-                  onClick={onNextPageClick}
-                  className="rounded bg-blue-600 px-4 py-1 font-bold text-white hover:bg-primary-100"
-                >
-                  <Icons name="MdNavigateNext" size={20} />
-                </button>
-              )}
+          {onNextPageClick && onBackPageClick && (
+            <div className="mt-4 flex justify-end">
+              <div className="flex gap-4">
+                {totalPages > 1 && page > 1 && (
+                  <button
+                    onClick={onBackPageClick}
+                    className="rounded bg-blue-600 px-4 py-0 font-bold text-white hover:bg-primary-100"
+                  >
+                    <Icons name="MdNavigateBefore" size={20} />
+                  </button>
+                )}
+                <p>
+                  Página {page} de {totalPages}
+                </p>
+                {page < totalPages && (
+                  <button
+                    onClick={onNextPageClick}
+                    className="rounded bg-blue-600 px-4 py-1 font-bold text-white hover:bg-primary-100"
+                  >
+                    <Icons name="MdNavigateNext" size={20} />
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </>
       )}
     </div>
