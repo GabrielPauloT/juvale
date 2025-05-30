@@ -16,6 +16,8 @@ export function DataTable<T extends Record<string, any>>({
   onDeleteClick,
   onAddAbsentClick,
   onRelatorioClick,
+  searchValue,
+  onChangeSearchValue
 }: DataTableProps<T>) {
 
   const [isMobile, setIsMobile] = useState(false);
@@ -53,6 +55,13 @@ export function DataTable<T extends Record<string, any>>({
    if (isMobile) {
     return (
       <div style={{ padding: "1rem", width: "100%" }}>
+        <input 
+          type="text" 
+          style={{ width: "100%", padding: "0.5rem", borderRadius: "0.25rem", borderBottom: "1px solid #4B5563", outline: 'none', backgroundColor: 'transparent', marginBottom: '1%' }}
+          placeholder="Pesquisar..."
+          value={searchValue}
+          onChange={onChangeSearchValue}
+        />
         {data.map((row, index) => (
           <div 
             key={index} 
@@ -172,6 +181,8 @@ export function DataTable<T extends Record<string, any>>({
       type="text" 
       style={{ width: "100%", padding: "0.5rem", borderRadius: "0.25rem", borderBottom: "1px solid #4B5563", outline: 'none', backgroundColor: 'transparent', marginBottom: '1%' }}
       placeholder="Pesquisar..."
+      value={searchValue}
+      onChange={onChangeSearchValue}
     />
       <table className="max-h-full w-full table-auto border-collapse rounded-full border dark:border-gray-600">
         <thead>

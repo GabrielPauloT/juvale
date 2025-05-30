@@ -1,3 +1,5 @@
+import { SetStateAction } from "react";
+
 export type DataTableProps<T> = Readonly<{
   data: T[] | undefined;
   totalPages: number | undefined;
@@ -10,4 +12,6 @@ export type DataTableProps<T> = Readonly<{
   onViewClick?: (row: T) => void;
   onRelatorioClick?: (row: T) => void;
   onAddAbsentClick?: (row: T) => void;
+  searchValue?: string;
+  onChangeSearchValue?: (input: { target: { value: SetStateAction<string>; }; }) => void;
 }>;
