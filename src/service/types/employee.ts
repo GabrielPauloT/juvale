@@ -13,7 +13,7 @@ type reponseCompany = {
     last_modified: string | null
 }
 
-type reponseTicket = {
+export type reponseTicket = {
 		id: number,
 		code_employee: string,
 		value: string,
@@ -41,8 +41,10 @@ export type EmployeeResponseType = {
 	name: string,
 	jobDescription: string,
 	salary: string,
-	vr: number,
-	va: number,
+	vrTotal: number,
+	vrPerDay: number,
+	vtTotal: number,
+	vtPerDay: number,
 	enabled: boolean,
 	ticket: reponseTicket[],
 	snack: reponseSnack[],

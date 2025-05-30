@@ -12,6 +12,7 @@ export type DataTableProps<T> = Readonly<{
   onViewClick?: (row: T) => void;
   onRelatorioClick?: (row: T) => void;
   onAddAbsentClick?: (row: T) => void;
+  onAddTicketClick?: (row: T) => void;
   searchValue?: string;
   onChangeSearchValue?: (input: { target: { value: SetStateAction<string>; }; }) => void;
 }>;

@@ -17,7 +17,8 @@ export function DataTable<T extends Record<string, any>>({
   onAddAbsentClick,
   onRelatorioClick,
   searchValue,
-  onChangeSearchValue
+  onChangeSearchValue,
+  onAddTicketClick
 }: DataTableProps<T>) {
 
   const [isMobile, setIsMobile] = useState(false);
@@ -117,6 +118,21 @@ export function DataTable<T extends Record<string, any>>({
                   }}
                   >
                     <Icons name="BsPersonExclamation" size={20} />
+                  </button>
+                )
+              }
+              {
+                onAddTicketClick && (
+                  <button
+                    onClick={() => onAddTicketClick(row)}
+                    style={{
+                    color: "blue",
+                    cursor: "pointer",
+                    background: "none",
+                    border: "none",
+                  }}
+                  >
+                    <Icons name="BsTruck" size={20} />
                   </button>
                 )
               }
@@ -252,6 +268,16 @@ export function DataTable<T extends Record<string, any>>({
                         className="text-blue-500 hover:text-blue-700"
                       >
                         <Icons name="MdOutlineSimCardDownload" size={20} />
+                      </button>
+                    </td>
+                  )}
+                   {onAddTicketClick && (
+                    <td className="border-b border-gray-300 px-4 py-2 text-center">
+                      <button
+                        onClick={() => onAddTicketClick(row)}
+                        className="text-blue-500 hover:text-blue-700"
+                      >
+                        <Icons name="BsTruck" size={20} />
                       </button>
                     </td>
                   )}

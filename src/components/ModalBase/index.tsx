@@ -1,27 +1,39 @@
 import { ModalBaseProps } from "./ModalBase.types";
 
-export function ModalBase({ title, children, onClose, onSend, actionButton = 'Enviar', open }: ModalBaseProps) {
-    if(open) {
-        return(
-            <div className="flex items-center justify-center fixed w-full h-full bg-black bg-opacity-50 z-[999] isolate top-0 right-0">
-                <div className="w-[80%] sm:w-[40%] bg-white text-black fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 rounded-lg">
-                <h1 className="text-2xl mb-3">{title}</h1>
-                    {children}
-                <div className="w-full flex items-center justify-end gap-2">
-                    <button
-                    className="text-base border border-black px-5 py-1 rounded-md bg-white text-black hover:bg-gray-50 transition-colors"
-                    onClick={onClose}
-                    >
-                    Fechar
-                    </button>
-                    <button className="text-base border border-green-500 px-5 py-1 rounded-md bg-green-500 text-white hover:bg-green-600 transition-colors"
-                    onClick={onSend}
-                    >
-                    {actionButton}
-                    </button>
-                </div>
-                </div>
-            </div>
-        )
-    }
+export function ModalBase({
+  title,
+  children,
+  onClose,
+  onSend,
+  actionButton = "Enviar",
+  open,
+}: ModalBaseProps) {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-[999] bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="w-[90%] sm:w-[500px] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 relative">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">
+          {title}
+        </h2>
+
+        <div className="mb-6">{children}</div>
+
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+          >
+            Fechar
+          </button>
+          <button
+            onClick={onSend}
+            className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors"
+          >
+            {actionButton}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }

@@ -8,3 +8,15 @@ export type FindCompanyEmployeeCostResponseType = {
   totalVR: number;
   totalFuncionariosAtivos: number;
 };
+
+export type findAllCompanyResponseType = {
+			id: number,
+			name: string,
+			created_at: string,
+			last_modified: string | null
+}
+
+export type findAllCompanyRequestType = {
+			page: number,
+      perPage: number
+}
