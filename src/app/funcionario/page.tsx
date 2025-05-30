@@ -10,6 +10,9 @@ import { SetStateAction, useCallback, useEffect, useState } from "react";
 import {debounce} from "lodash"
 import { ReactQueryKeysEnum } from "@/@types";
 import { useQueryClient } from "@tanstack/react-query";
+import { useCompany } from "@/service/hooks/CompanyQuery";
+import { TicketArrayFields } from "./TicketArrayFields";
+import { requestTicket } from "./TicketArrayFields/types";
 
 export default function FuncionariosPage() {
   const queryCliente = useQueryClient();
@@ -23,22 +26,44 @@ export default function FuncionariosPage() {
     new Date().toISOString().split("T")[0]
   );
   const [searchDebounced, setSearchDebounced] = useState<string>("");
+  const [selectedCompany, setSelectedCompany] = useState<number | null>(null);
 
 
-  const { data } = UseEmployee({ page, perPage, companyId, date: selectedDate, name: searchDebounced.trim()});
+  const { data } = UseEmployee({ page, perPage, companyId: selectedCompany, date: selectedDate, name: searchDebounced.trim()});
+  const { data: company } = useCompany({page: 0, perPage: 100})
   const deleteEmployeerMutation = useDeleteEmployee();
-
-  
 
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [openModalAddPdf, setOpenModalAddPdf] = useState(false);
   const [openModalAbsent, setOpenModalAbsent] = useState(false);
+  const [openModalTicket, setOpenModalTicket] = useState(false);
+  const [editedTickets, setEditedTickets] = useState<requestTicket[]>([]);
   const [row, setRow] = useState<EmployeeResponseType>();
+  
+  const [selectedCompanyRow, setSelectedCompanyRow] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (row?.company?.id) {
+      setSelectedCompanyRow(row.company.id);
+    }
+  }, [row]);
+
 
   function handleAddPdf() {
     setOpenModalAddPdf(true)
   }
+
+  const handleAddTicket = useCallback((row: EmployeeResponseType) => {
+    setOpenModalTicket(true)
+    console.log('enviados')
+    setRow(row)
+  }, []);
+
+  const handleSendTickets = async () => {
+    console.log("editedTicked", editedTickets)
+  };
+
 
   function handleChangeValueInput (input: { target: { value: SetStateAction<string>; }; }) {
     setName(input.target.value)
@@ -98,7 +123,7 @@ export default function FuncionariosPage() {
   return (
     <Layout pageTitle="Funcionários">
 
-      <div className="flex justify-center mb-5">
+      <div className="flex justify-center mb-5 gap-3">
           <div className="flex items-center gap-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 shadow-md">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Selecione a data:
@@ -109,6 +134,25 @@ export default function FuncionariosPage() {
               onChange={(e) => setSelectedDate(e.target.value)}
               className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+          </div>
+          <div className="flex items-center gap-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-2 shadow-md">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Selecione a company:
+            </label>
+            <select
+              className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={selectedCompany ?? ''}
+              onChange={(e) => setSelectedCompany(Number(e.target.value))}
+              >
+                <option value="">
+                  Selecione uma empresa
+                </option>
+                {company?.data?.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
           </div>
         </div>
 
@@ -132,53 +176,86 @@ export default function FuncionariosPage() {
         onClose={() => setOpenModalEdit(false)}
         onSend={() => console.log('ok')}
       > 
+        {
+          row ? (
+
           <div className="flex flex-col gap-4">
             <div className="w-full flex flex-col gap-1">
               <p className="text-sm">Nome:</p>
               <input
                 type="text"
                 placeholder="Nome"
-                className="border border-black p-1 rounded-sm outline-none"
+                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 defaultValue={row?.name ? row.name : "{sem Nome}"}
               />
             </div>
             <div className="w-full flex flex-col gap-1">
               <p className="text-sm">Compania:</p>
-              <input
-                type="text"
-                placeholder="Compania"
-                className="border border-black p-1 rounded-sm outline-none"
-                defaultValue={row?.company.name ? row.company.name : "{sem Compania}"}
-              />
+              <select
+                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={selectedCompanyRow ?? ''}
+                onChange={(e) => setSelectedCompanyRow(Number(e.target.value))}
+              >
+                <option value="" disabled>
+                  Selecione uma empresa
+                </option>
+                {company?.data?.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="w-full flex flex-col gap-1">
               <p className="text-sm">Ocupação:</p>
               <input
                 type="text"
                 placeholder="Ocupação"
-                className="border border-black p-1 rounded-sm outline-none"
+                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 defaultValue={row?.jobDescription ? row.jobDescription : "{sem Ocupação}"}
               />
             </div>
+
             <div className="w-full flex flex-col gap-1">
-              <p className="text-sm">VR:</p>
+              <p className="text-sm">VR gasto por dia:</p>
               <input
                 type="text"
                 placeholder="VR"
-                className="border border-black p-1 rounded-sm outline-none"
-                defaultValue={row?.vr ? row.vr : "{sem VR}"}
+                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                defaultValue={row?.vrPerDay ? row.vrPerDay : 0.0}
               />
             </div>
             <div className="w-full flex flex-col gap- pb-6">
-              <p className="text-sm">VA:</p>
+              <p className="text-sm">VT gasto por dia:</p>
               <input
                 type="text"
-                placeholder="VA"
-                className="border border-black p-1 rounded-sm outline-none"
-                defaultValue={row?.va ? row.va : "{sem VA}"}
+                placeholder="VT"
+                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                defaultValue={row?.vtPerDay ? row.vtPerDay : 0.0}
               />
             </div>
           </div>
+          ) : <div>
+            <p>Sem Dados</p>
+          </div>
+        }
+      </ModalBase>
+
+      <ModalBase
+        title="Adicionar Ticket"
+        open={openModalTicket}
+        onClose={() => setOpenModalTicket(false)}
+        onSend={handleSendTickets}
+      >
+        {row ? (
+          <TicketArrayFields
+            codeEmployee={row?.codeEmployee}
+            data={row?.ticket}
+            onChange={setEditedTickets}
+          />
+        ) : (
+          <p>Sem Dados</p>
+        )}
       </ModalBase>
 
       <ModalBase 
@@ -191,7 +268,7 @@ export default function FuncionariosPage() {
             <input
               type="file"
               accept="application/pdf"
-              className="mb-4 p-2 border rounded w-full"
+              className="w-full mb-4 px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="flex flex-col items-start justify-start gap-2">
@@ -215,7 +292,7 @@ export default function FuncionariosPage() {
           <div className="mb-3">
             <input
               type="date"
-              className="border border-black p-1 w-full"
+              className="w-full px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="mb-3">
@@ -237,12 +314,13 @@ export default function FuncionariosPage() {
           data={data?.data}
           totalPages={data?.totalPages}
           page={page}
-          hiddenFields={["ticket", "snack", "absence", "company", "enabled"]}
+          hiddenFields={["ticket", "snack", "absence", "company", "enabled", "salary"]}
           onNextPageClick={() => setPage((page) => page + 1)}
           onBackPageClick={() => setPage((page) => page - 1)}
           onEditClick={handleEdit}
           onDeleteClick={handleDelete}
           onAddAbsentClick={handleAddAbsent}
+          onAddTicketClick={handleAddTicket}
           searchValue={name}
           onChangeSearchValue={handleChangeValueInput}
         />

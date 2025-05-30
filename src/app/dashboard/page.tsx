@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
-import { useCompany } from "@/service/hooks/CompanyQuery";
+import { useCompanyEemployeeCost } from "@/service/hooks/CompanyQuery";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -13,7 +13,7 @@ export default function DashboardPage() {
     new Date().toISOString().split("T")[0]
   );
 
-  const { data } = useCompany({ date: selectedDate });
+  const { data } = useCompanyEemployeeCost({ date: selectedDate });
 
   const funcionariosData = {
     labels: data?.data.map((item) => item.nameCompany) || [],
