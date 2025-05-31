@@ -63,13 +63,15 @@ export function DataTable<T extends Record<string, any>>({
 
   return (
     <div className="flex h-full w-full flex-col p-4">
-      <input
-        type="text"
-        className="w-full rounded-md border border-gray-400 bg-transparent px-3 py-2 text-sm text-black placeholder:text-gray-500 focus:outline-none dark:border-gray-600 dark:text-white dark:placeholder:text-gray-400 mb-4"
-        placeholder="Pesquisar..."
-        value={searchValue}
-        onChange={onChangeSearchValue}
-      />
+      {onChangeSearchValue && (
+        <input
+          type="text"
+          className="w-full rounded-md border border-gray-400 bg-transparent px-3 py-2 text-sm text-black placeholder:text-gray-500 focus:outline-none dark:border-gray-600 dark:text-white dark:placeholder:text-gray-400 mb-4"
+          placeholder="Pesquisar..."
+          value={searchValue}
+          onChange={onChangeSearchValue}
+        />
+      )}
 
       {isLoading ? (
         <div className="flex flex-1 items-center justify-center h-96">
