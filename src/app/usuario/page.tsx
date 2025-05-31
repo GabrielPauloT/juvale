@@ -14,6 +14,8 @@ import { ModalBase } from "@/components/ModalBase";
 import { debounce } from "lodash";
 import { useQueryClient } from "@tanstack/react-query";
 import { ReactQueryKeysEnum } from "@/@types";
+import { Toast } from "@/components/Toast";
+
 
 export default function UsuariosPage() {
   const queryCliente = useQueryClient();
@@ -37,6 +39,17 @@ export default function UsuariosPage() {
   const [password, setPassword] = useState<string>("");
   const [selectedRole, setSelectedRole] = useState<roleUser>("admin");
 
+  const [toast, setToast] = useState<
+    { type: "success" | "error"; message: string } | undefined
+  >();
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ type, message });
+  };
+
+  const [loading, setIsLoading] = useState(false)
+
+
   useEffect(() => {
     if (row) {
       setName(row.name ?? "");
@@ -47,6 +60,7 @@ export default function UsuariosPage() {
 
   const handleEdit = useCallback(() => {
     if (row) {
+      setIsLoading(true)
       updateUserMutation
         .mutateAsync({
           id: row.id,
@@ -58,7 +72,7 @@ export default function UsuariosPage() {
           },
         })
         .then(() => {
-          console.log("Usuario atualizado com sucesso");
+          showToast("Usuário atualizado com sucesso", "success");
           queryCliente.invalidateQueries({
             queryKey: [ReactQueryKeysEnum.USER_FINDALL],
           });
@@ -67,10 +81,11 @@ export default function UsuariosPage() {
           }
         })
         .catch(() => {
-          console.log("Erro ao atualizar usuario");
+          showToast("Erro ao atualizar usuário", "error");
         })
         .finally(() => {
           setOpenModalEdit(false);
+          setIsLoading(false)
         });
     }
   }, [
@@ -85,6 +100,7 @@ export default function UsuariosPage() {
   ]);
 
   const handleCreate = useCallback(() => {
+    setIsLoading(true)
     createUserMutation
       .mutateAsync({
         email: email,
@@ -93,7 +109,7 @@ export default function UsuariosPage() {
         role: selectedRole,
       })
       .then(() => {
-        console.log("Usuario criado com sucesso");
+        showToast("Usuário criado com sucesso", "success");
         queryCliente.invalidateQueries({
           queryKey: [ReactQueryKeysEnum.USER_FINDALL],
         });
@@ -102,10 +118,11 @@ export default function UsuariosPage() {
         }
       })
       .catch(() => {
-        console.log("Erro ao criar usuario");
+        showToast("Erro ao criar usuário", "error");
       })
       .finally(() => {
         setOpenModalCreate(false);
+        setIsLoading(false)
       });
   }, [
     createUserMutation,
@@ -119,10 +136,11 @@ export default function UsuariosPage() {
 
   const handleDelete = useCallback(() => {
     if (row) {
+      setIsLoading(true)
       deleteUserMutation
         .mutateAsync(row.id)
         .then(() => {
-          console.log("Usuario deletado com sucesso");
+          showToast("Usuário deletado com sucesso", "success");
           queryCliente.invalidateQueries({
             queryKey: [ReactQueryKeysEnum.USER_FINDALL],
           });
@@ -131,10 +149,11 @@ export default function UsuariosPage() {
           }
         })
         .catch(() => {
-          console.log("Erro ao deletado usuario");
+          showToast("Erro ao deletar usuário", "error");
         })
         .finally(() => {
           setOpenModalDelete(false);
+          setIsLoading(false)
         });
     }
   }, [row, deleteUserMutation, queryCliente, data]);
@@ -204,6 +223,7 @@ export default function UsuariosPage() {
         open={openModalEdit}
         onClose={() => setOpenModalEdit(false)}
         onSend={handleEdit}
+        isFetching={loading}
       >
         {row ? (
           <div className="flex flex-col gap-4">
@@ -273,6 +293,7 @@ export default function UsuariosPage() {
         open={openModalCreate}
         onClose={() => setOpenModalCreate(false)}
         onSend={handleCreate}
+        isFetching={loading}
       >
         <div className="flex flex-col gap-4">
           <div className="w-full flex flex-col gap-1">
@@ -336,6 +357,7 @@ export default function UsuariosPage() {
         open={openModalDelete}
         onClose={() => setOpenModalDelete(false)}
         onSend={handleDelete}
+        isFetching={loading}
       >
         {row ? (
           <p className="text-base mb-6">
@@ -348,6 +370,10 @@ export default function UsuariosPage() {
           </div>
         )}
       </ModalBase>
+
+      {toast && (
+        <Toast type={toast.type} message={toast.message} isClose={setToast} />
+      )}
     </>
   );
 }

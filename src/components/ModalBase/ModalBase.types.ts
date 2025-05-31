@@ -6,5 +6,6 @@ export type ModalBaseProps = {
     onClose: () => void,
     onSend: () => void,
     children: ReactNode,
-    actionButton?: string
+    actionButton?: string,
+    isFetching?: boolean
 }

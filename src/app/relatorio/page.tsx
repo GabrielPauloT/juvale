@@ -3,6 +3,7 @@
 import { DataTable } from "@/components/DataTable";
 import { Layout } from "@/components/Layout";
 import { ModalBase } from "@/components/ModalBase";
+import { Toast } from "@/components/Toast";
 import {
   reportsCompany,
   reportsCompanyEmployee,
@@ -18,8 +19,16 @@ type Data = {
 export default function RelatorioPage() {
   const [openModal, setOpenModal] = useState(false);
   const [row, setRow] = useState<Data>();
-
+  const [loading, setIsLoading] = useState(false)
   const [date, setDate] = useState("");
+
+  const [toast, setToast] = useState<
+    { type: "success" | "error"; message: string } | undefined
+  >();
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ type, message });
+  };
 
   const data: Data[] = useMemo(
     () => [
@@ -41,34 +50,46 @@ export default function RelatorioPage() {
 
   const handleImprimirRelatorio = useCallback(() => {
     if (row?.id === 1) {
+      setIsLoading(true)
       reportsCompany(date, "Relatório de Gastos por Empresa")
-        .then(() => {})
-        .catch((e) => {
-          console.log(e);
+        .then(() => {
+          showToast("Relatório gerado com sucesso", "success");
+        })
+        .catch(() => {
+          showToast("Erro ao gerar relatório", "error");
         })
         .finally(() => {
           setOpenModal((openModal) => !openModal);
+          setIsLoading(false)
         });
     } else if (row?.id === 2) {
+      setIsLoading(true)
       reportsCompanyEmployee(date, "Relatório de Gastos por Funcionário")
-        .then(() => {})
-        .catch((e) => {
-          console.log(e);
+        .then(() => {
+          showToast("Relatório gerado com sucesso", "success");
+        })
+        .catch(() => {
+          showToast("Erro ao gerar relatório", "error");
         })
         .finally(() => {
           setOpenModal((openModal) => !openModal);
+          setIsLoading(false)
         });
     } else if (row?.id === 3) {
+      setIsLoading(true)
       reportsCompanyEmployeeWithAbsences(
         date,
         "Relatório de Gastos por Funcionário (com Faltas)"
       )
-        .then(() => {})
-        .catch((e) => {
-          console.log(e);
+        .then(() => {
+          showToast("Relatório gerado com sucesso", "success");
+        })
+        .catch(() => {
+          showToast("Erro ao gerar relatório", "error");
         })
         .finally(() => {
           setOpenModal((openModal) => !openModal);
+          setIsLoading(false)
         });
     }
   }, [date, row?.id]);
@@ -95,6 +116,7 @@ export default function RelatorioPage() {
         open={openModal}
         onClose={() => setOpenModal(false)}
         onSend={() => handleImprimirRelatorio()}
+        isFetching={loading}
       >
         <p className="text-base mb-6">
           <div className="mb-3">
@@ -106,6 +128,9 @@ export default function RelatorioPage() {
           </div>
         </p>
       </ModalBase>
+      {toast && (
+          <Toast type={toast.type} message={toast.message} isClose={setToast} />
+      )}
     </>
   );
 }
