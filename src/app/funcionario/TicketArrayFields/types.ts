@@ -8,6 +8,6 @@ export type TicketArrayFieldsProps = {
 
 export type requestTicket = {
   id: number
-  value: string
+  value: number
   codeEmployee: string
 }
