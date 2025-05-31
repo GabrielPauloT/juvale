@@ -7,8 +7,8 @@ export type DataTableProps<T> = Readonly<{
   hiddenFields?: (keyof T | string)[];
   onlyFields?: (keyof T | string)[];
   columnLabels?: Record<string, string>;
-  onNextPageClick: () => void;
-  onBackPageClick: () => void;
+  onNextPageClick?: () => void;
+  onBackPageClick?: () => void;
   onEditClick?: (row: T) => void;
   onDeleteClick?: (row: T) => void;
   onViewClick?: (row: T) => void;
