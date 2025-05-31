@@ -240,7 +240,7 @@ export function DataTable<T extends Record<string, any>>({
                     {onAddAbsentClick && (
                       <button
                         onClick={() => onAddAbsentClick(row)}
-                        className="mr-2 text-green-500 hover:text-green-700"
+                        className="mr-2 text-yellow-500 hover:text-yellow-600"
                       >
                         <Icons name="BsPersonExclamation" size={20} />
                       </button>
