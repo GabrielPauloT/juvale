@@ -1,8 +1,8 @@
 import { ReactQueryKeysEnum } from "@/@types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { EmployeerRequest } from "../requests";
-import { findAllEmployeersRequestType } from "../types/employee";
-import { deleteEmployee } from "../requests/EmployeeRequest";
+import { findAllEmployeersRequestType, updateEmployeeType } from "../types/employee";
+import { deleteEmployee, updateEmployee } from "../requests/EmployeeRequest";
 
 export function UseEmployee(findAllEmployeers: findAllEmployeersRequestType) {
   return useQuery({
@@ -30,6 +30,13 @@ export function UseEmployee(findAllEmployeers: findAllEmployeersRequestType) {
 export function useDeleteEmployee() {
   const mutation = useMutation({
     mutationFn: (codeEmployee: string) => deleteEmployee(codeEmployee),
+  });
+  return mutation;
+}
+
+export function useEditEmployee() {
+  const mutation = useMutation({
+    mutationFn: ({codeEmployee, data} : {codeEmployee: string, data: updateEmployeeType}) => updateEmployee(codeEmployee, data),
   });
   return mutation;
 }

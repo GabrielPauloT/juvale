@@ -40,9 +40,9 @@ export type EmployeeResponseType = {
 	codeCompany: number,
 	name: string,
 	jobDescription: string,
-	salary: string,
+	salary: string | number,
 	vrTotal: number,
-	vrPerDay: number,
+	vrPerDay: number | undefined,
 	vtTotal: number,
 	vtPerDay: number,
 	enabled: boolean,
@@ -51,3 +51,11 @@ export type EmployeeResponseType = {
 	absence: reponseAbsence[],
 	company: reponseCompany
 };
+
+export type updateEmployeeType = {
+	codeCompany: number | null,
+    name: string | undefined,
+    jobDescription: string | undefined,
+    salary: string | number | undefined
+	snackValue: number | undefined
+}

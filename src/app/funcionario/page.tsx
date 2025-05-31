@@ -4,7 +4,7 @@ import { DataTable } from "@/components/DataTable";
 import { Icons } from "@/components/Icons";
 import { Layout } from "@/components/Layout";
 import { ModalBase } from "@/components/ModalBase";
-import { useDeleteEmployee, UseEmployee } from "@/service/hooks/UseEmployee";
+import { useDeleteEmployee, useEditEmployee, UseEmployee } from "@/service/hooks/UseEmployee";
 import { EmployeeResponseType } from "@/service/types/employee";
 import { SetStateAction, useCallback, useEffect, useState } from "react";
 import { debounce } from "lodash";
@@ -13,6 +13,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCompany } from "@/service/hooks/CompanyQuery";
 import { TicketArrayFields } from "./TicketArrayFields";
 import { requestTicket } from "./TicketArrayFields/types";
+import { useCreateAbsence } from "@/service/hooks/UseAbsence";
+import { useInactivePDF, useUploadPDF } from "@/service/hooks/UsePdf";
+import { useCreateTicket } from "@/service/hooks/UseTicket";
 
 export default function FuncionariosPage() {
   const queryCliente = useQueryClient();
@@ -27,6 +30,8 @@ export default function FuncionariosPage() {
   );
   const [searchDebounced, setSearchDebounced] = useState<string>("");
   const [selectedCompany, setSelectedCompany] = useState<number | null>(null);
+  const [selectedCompanyPDF, setSelectedCompanyPDF] = useState<number>();
+
 
   const { data } = UseEmployee({
     page,
@@ -37,6 +42,14 @@ export default function FuncionariosPage() {
   });
   const { data: company } = useCompany({ page: 0, perPage: 100 });
   const deleteEmployeerMutation = useDeleteEmployee();
+  const updateEmployeerMutation = useEditEmployee();
+  const createAbsenceMutation = useCreateAbsence();
+  const uploadPDF = useUploadPDF()
+  const inactivePDF = useInactivePDF()
+  const createTicket = useCreateTicket()
+
+
+
 
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const [openModalEdit, setOpenModalEdit] = useState(false);
@@ -45,14 +58,27 @@ export default function FuncionariosPage() {
   const [openModalTicket, setOpenModalTicket] = useState(false);
   const [editedTickets, setEditedTickets] = useState<requestTicket[]>([]);
   const [row, setRow] = useState<EmployeeResponseType>();
+  const [nameEmployee, setNameEmployee] = useState("")
+  const [jobDescription, setJobDescription] = useState("")
+  const [salary, setSalary] = useState<number|string>(0)
+  const [vr, setVr] = useState(0)
+  const [date, setDate] = useState('')
+  const [certificateAbsence, setCertificateAbsence] = useState(false)
+  const [addFuncionario, setAddFuncionario] = useState(false)
+  const [pdf, setPdf] = useState<File>()
 
   const [selectedCompanyRow, setSelectedCompanyRow] = useState<number | null>(
     null
   );
 
+
   useEffect(() => {
-    if (row?.company?.id) {
+    if (row) {
       setSelectedCompanyRow(row.company.id);
+      setNameEmployee(row.name)
+      setJobDescription(row.jobDescription)
+      setSalary(row.salary ? row.salary : 0)
+      setVr(row.vrPerDay ? row.vrPerDay : 0)
     }
   }, [row]);
 
@@ -66,9 +92,24 @@ export default function FuncionariosPage() {
     setRow(row);
   }, []);
 
-  const handleSendTickets = async () => {
-    console.log("editedTicked", editedTickets);
-  };
+  function handleSendTickets() {
+    if (!!row) {
+        createTicket
+        .mutateAsync(editedTickets)
+        .then(() => {
+          console.log("ticket adicionada com sucesso");
+          queryCliente.invalidateQueries({
+            queryKey: [ReactQueryKeysEnum.EMPLOYEE_FINDALL],
+          });
+        })
+        .catch(() => {
+          console.log("Erro ao adicionar ticket");
+        })
+        .finally(() => {
+          setOpenModalTicket(false);
+        });
+    }
+  }
 
   function handleChangeValueInput(input: {
     target: { value: SetStateAction<string> };
@@ -80,6 +121,62 @@ export default function FuncionariosPage() {
     setOpenModalEdit(true);
     setRow(row);
   }, []);
+
+  function handleActionPDF() {
+      if (addFuncionario && pdf && selectedCompanyPDF) {
+        console.log("pdf", pdf)
+        uploadPDF
+        .mutateAsync({pdf: pdf, companyId: selectedCompanyPDF.toString()})
+        .then(() => {
+          console.log("pdf inserido com sucesso");
+          queryCliente.invalidateQueries({
+            queryKey: [ReactQueryKeysEnum.EMPLOYEE_FINDALL],
+          });
+        })
+        .catch(() => {
+          console.log("Erro ao adicionar o PDF");
+        })
+        .finally(() => {
+          setOpenModalAbsent(false);
+        });
+      }
+
+      if(!addFuncionario && pdf) {
+        inactivePDF
+        .mutateAsync(pdf)
+        .then(() => {
+          console.log("pdf inserido com sucesso");
+          queryCliente.invalidateQueries({
+            queryKey: [ReactQueryKeysEnum.EMPLOYEE_FINDALL],
+          });
+        })
+        .catch(() => {
+          console.log("Erro ao adicionar o PDF");
+        })
+        .finally(() => {
+          setOpenModalAbsent(false);
+        });
+      }
+  }
+
+  function handleCreateAbsence() {
+    if (!!row) {
+      createAbsenceMutation
+        .mutateAsync({codeEmployee: row?.codeEmployee, absenceDate: date, certificateAbsence: certificateAbsence})
+        .then(() => {
+          console.log("falta adicionada com sucesso");
+          queryCliente.invalidateQueries({
+            queryKey: [ReactQueryKeysEnum.EMPLOYEE_FINDALL],
+          });
+        })
+        .catch(() => {
+          console.log("Erro ao adicionar a falta");
+        })
+        .finally(() => {
+          setOpenModalAbsent(false);
+        });
+    }
+  }
 
   function handleDeleteEmployee() {
     if (!!row) {
@@ -99,6 +196,32 @@ export default function FuncionariosPage() {
         })
         .finally(() => {
           setOpenModalDelete(false);
+        });
+    }
+  }
+
+  function handleUpdateEmployee() {
+    const data = {
+      codeCompany: selectedCompanyRow,
+      name: nameEmployee,
+      jobDescription: jobDescription,
+      salary: salary,
+      snackValue: vr
+    }
+    if (!!row) {
+      updateEmployeerMutation
+        .mutateAsync({codeEmployee: row?.codeEmployee, data: data})
+        .then(() => {
+          console.log("Usuario editado com sucesso");
+          queryCliente.invalidateQueries({
+            queryKey: [ReactQueryKeysEnum.EMPLOYEE_FINDALL],
+          });
+        })
+        .catch(() => {
+          console.log("Erro ao editar usuario");
+        })
+        .finally(() => {
+          setOpenModalEdit(false);
         });
     }
   }
@@ -153,7 +276,7 @@ export default function FuncionariosPage() {
             value={selectedCompany ?? ""}
             onChange={(e) => setSelectedCompany(Number(e.target.value))}
           >
-            <option value="">Selecione uma empresa</option>
+            <option value="" disabled>Selecione uma empresa</option>
             {company?.data?.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
@@ -181,7 +304,7 @@ export default function FuncionariosPage() {
         actionButton="Editar"
         open={openModalEdit}
         onClose={() => setOpenModalEdit(false)}
-        onSend={() => console.log("ok")}
+        onSend={() => handleUpdateEmployee()}
       >
         {row ? (
           <div className="flex flex-col gap-4">
@@ -192,6 +315,7 @@ export default function FuncionariosPage() {
                 placeholder="Nome"
                 className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 defaultValue={row?.name ? row.name : "{sem Nome}"}
+                onChange={(e) => setNameEmployee(e.target.value)}
               />
             </div>
             <div className="w-full flex flex-col gap-1">
@@ -220,6 +344,18 @@ export default function FuncionariosPage() {
                 defaultValue={
                   row?.jobDescription ? row.jobDescription : "{sem Ocupação}"
                 }
+                onChange={(e) => setJobDescription(e.target.value)}
+              />
+            </div>
+
+            <div className="w-full flex flex-col gap-1">
+              <p className="text-sm">Salário:</p>
+              <input
+                type="text"
+                placeholder="VR"
+                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                defaultValue={row?.salary ? row.salary : 0.0}
+                onChange={(e) => setSalary(Number(e.target.value))}
               />
             </div>
 
@@ -230,15 +366,7 @@ export default function FuncionariosPage() {
                 placeholder="VR"
                 className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 defaultValue={row?.vrPerDay ? row.vrPerDay : 0.0}
-              />
-            </div>
-            <div className="w-full flex flex-col gap- pb-6">
-              <p className="text-sm">VT gasto por dia:</p>
-              <input
-                type="text"
-                placeholder="VT"
-                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                defaultValue={row?.vtPerDay ? row.vtPerDay : 0.0}
+                onChange={(e) => setVr(Number(e.target.value))}
               />
             </div>
           </div>
@@ -270,41 +398,67 @@ export default function FuncionariosPage() {
         title="Adicionar PDF"
         open={openModalAddPdf}
         onClose={() => setOpenModalAddPdf(false)}
-        onSend={() => console.log("ok")}
+        onSend={handleActionPDF}
       >
         <div>
           <input
             type="file"
             accept="application/pdf"
             className="w-full mb-4 px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(event) => {
+              if (event.target.files && event.target.files.length > 0) {
+                setPdf(event.target.files[0]);
+              }
+            }}
           />
         </div>
         <div className="flex flex-col items-start justify-start gap-2">
           <div>
-            <input type="radio" name="pdfType" value="tipo1" />{" "}
+            <input type="radio" name="pdfType" value="tipo1" onClick={() => setAddFuncionario(true)} />{" "}
             <span>Adicionar funcionário</span>
           </div>
           <div>
-            <input type="radio" name="pdfType" value="tipo2" />{" "}
+            <input type="radio" name="pdfType" value="tipo2" onClick={() => setAddFuncionario(false)} />{" "}
             <span>Desativar funcionário</span>
           </div>
         </div>
+
+        {addFuncionario ? (
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 shadow-md w-full md:w-auto mt-4">
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            Selecione a company:
+          </label>
+          <select
+            className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
+            value={selectedCompanyPDF ?? ""}
+            onChange={(e) => setSelectedCompanyPDF(Number(e.target.value))}
+          >
+            <option value="">Selecione uma empresa</option>
+            {company?.data?.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        ) : null}
       </ModalBase>
 
       <ModalBase
-        title="Adicionar Faltas"
+        title="Adicionar Falta"
         open={openModalAbsent}
         onClose={() => setOpenModalAbsent(false)}
-        onSend={() => console.log("ok")}
+        onSend={handleCreateAbsence}
       >
         <div className="mb-3">
           <input
             type="date"
             className="w-full px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e) => setDate(e.target.value)}
           />
         </div>
         <div className="mb-3">
-          <input type="checkbox" name="pdfType" value="tipo1" />{" "}
+          <input type="checkbox" name="pdfType" value="tipo1" onClick={() => setCertificateAbsence(!certificateAbsence)} />{" "}
           <span>Possui atestado</span>
         </div>
       </ModalBase>
