@@ -106,7 +106,7 @@ export default function FuncionariosPage() {
           console.log("Erro ao adicionar ticket");
         })
         .finally(() => {
-          setOpenModalAbsent(false);
+          setOpenModalTicket(false);
         });
     }
   }
