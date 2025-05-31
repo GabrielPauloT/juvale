@@ -16,6 +16,7 @@ import { requestTicket } from "./TicketArrayFields/types";
 import { useCreateAbsence } from "@/service/hooks/UseAbsence";
 import { useInactivePDF, useUploadPDF } from "@/service/hooks/UsePdf";
 import { useCreateTicket } from "@/service/hooks/UseTicket";
+import { Toast } from "@/components/Toast";
 
 export default function FuncionariosPage() {
   const queryCliente = useQueryClient();
@@ -49,8 +50,6 @@ export default function FuncionariosPage() {
   const createTicket = useCreateTicket()
 
 
-
-
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [openModalAddPdf, setOpenModalAddPdf] = useState(false);
@@ -66,10 +65,20 @@ export default function FuncionariosPage() {
   const [certificateAbsence, setCertificateAbsence] = useState(false)
   const [addFuncionario, setAddFuncionario] = useState(false)
   const [pdf, setPdf] = useState<File>()
+    const [toast, setToast] = useState<
+    { type: "success" | "error"; message: string } | undefined
+  >();
+
+    const showToast = (message: string, type: "success" | "error") => {
+    setToast({ type, message });
+  };
+
 
   const [selectedCompanyRow, setSelectedCompanyRow] = useState<number | null>(
     null
   );
+
+  const [loading, setIsLoading] = useState(false)
 
 
   useEffect(() => {
@@ -86,6 +95,26 @@ export default function FuncionariosPage() {
     setOpenModalAddPdf(true);
   }
 
+  function closeModalPdf () {
+    setOpenModalAddPdf(false)
+    setAddFuncionario(false)
+  }
+
+  function closeModalAbsent () {
+    setOpenModalAbsent(false)
+    setCertificateAbsence(false)
+    setDate("")
+  }
+
+  function closeModalEdit() {
+    setOpenModalEdit(false)
+    setSelectedCompanyRow(null);
+    setNameEmployee("")
+    setJobDescription("")
+    setSalary(0)
+    setVr(0)
+  }
+
   const handleAddTicket = useCallback((row: EmployeeResponseType) => {
     setOpenModalTicket(true);
     console.log("enviados");
@@ -94,19 +123,21 @@ export default function FuncionariosPage() {
 
   function handleSendTickets() {
     if (!!row) {
+      setIsLoading(true)
         createTicket
         .mutateAsync(editedTickets)
         .then(() => {
-          console.log("ticket adicionada com sucesso");
+          showToast("Ticket adicionado com sucesso", "success");
           queryCliente.invalidateQueries({
             queryKey: [ReactQueryKeysEnum.EMPLOYEE_FINDALL],
           });
         })
         .catch(() => {
-          console.log("Erro ao adicionar ticket");
+          showToast("Erro ao adicionar ticket", "error");
         })
         .finally(() => {
           setOpenModalTicket(false);
+          setIsLoading(false)
         });
     }
   }
@@ -124,66 +155,72 @@ export default function FuncionariosPage() {
 
   function handleActionPDF() {
       if (addFuncionario && pdf && selectedCompanyPDF) {
-        console.log("pdf", pdf)
+        setIsLoading(true)
         uploadPDF
         .mutateAsync({pdf: pdf, companyId: selectedCompanyPDF.toString()})
         .then(() => {
-          console.log("pdf inserido com sucesso");
+          showToast("Pdf inserido com sucesso", "success");
           queryCliente.invalidateQueries({
             queryKey: [ReactQueryKeysEnum.EMPLOYEE_FINDALL],
           });
         })
         .catch(() => {
-          console.log("Erro ao adicionar o PDF");
+          showToast("Erro ao inserir PDF", "error");
         })
         .finally(() => {
-          setOpenModalAbsent(false);
+          setOpenModalAddPdf(false);
+          setIsLoading(false)
         });
       }
 
       if(!addFuncionario && pdf) {
+        setIsLoading(true)
         inactivePDF
         .mutateAsync(pdf)
         .then(() => {
-          console.log("pdf inserido com sucesso");
+          showToast("Pdf inserido com sucesso", "success");
           queryCliente.invalidateQueries({
             queryKey: [ReactQueryKeysEnum.EMPLOYEE_FINDALL],
           });
         })
         .catch(() => {
-          console.log("Erro ao adicionar o PDF");
+          showToast("Erro ao inserir PDF", "error");
         })
         .finally(() => {
-          setOpenModalAbsent(false);
+          setOpenModalAddPdf(false);
+          setIsLoading(false)
         });
       }
   }
 
   function handleCreateAbsence() {
     if (!!row) {
+      setIsLoading(true)
       createAbsenceMutation
         .mutateAsync({codeEmployee: row?.codeEmployee, absenceDate: date, certificateAbsence: certificateAbsence})
         .then(() => {
-          console.log("falta adicionada com sucesso");
+          showToast("Falta adicionada com sucesso", "success");
           queryCliente.invalidateQueries({
             queryKey: [ReactQueryKeysEnum.EMPLOYEE_FINDALL],
           });
         })
         .catch(() => {
-          console.log("Erro ao adicionar a falta");
+          showToast("Erro ao adicionar falta", "error");
         })
         .finally(() => {
           setOpenModalAbsent(false);
+          setIsLoading(false)
         });
     }
   }
 
   function handleDeleteEmployee() {
     if (!!row) {
+      setIsLoading(true)
       deleteEmployeerMutation
         .mutateAsync(row?.codeEmployee)
         .then(() => {
-          console.log("Usuario deletado com sucesso");
+          showToast("Usuário deletado com sucesso", "success");
           queryCliente.invalidateQueries({
             queryKey: [ReactQueryKeysEnum.EMPLOYEE_FINDALL],
           });
@@ -192,10 +229,11 @@ export default function FuncionariosPage() {
           }
         })
         .catch(() => {
-          console.log("Erro ao deletar usuario");
+          showToast("Erro ao deletar usuário", "error");
         })
         .finally(() => {
           setOpenModalDelete(false);
+          setIsLoading(false)
         });
     }
   }
@@ -209,19 +247,22 @@ export default function FuncionariosPage() {
       snackValue: vr
     }
     if (!!row) {
+      setIsLoading(true)
       updateEmployeerMutation
         .mutateAsync({codeEmployee: row?.codeEmployee, data: data})
         .then(() => {
-          console.log("Usuario editado com sucesso");
+          showToast("Usuário editado com sucesso", "success");
           queryCliente.invalidateQueries({
             queryKey: [ReactQueryKeysEnum.EMPLOYEE_FINDALL],
           });
         })
         .catch(() => {
-          console.log("Erro ao editar usuario");
+          showToast("Erro ao editar usuário", "error");
         })
         .finally(() => {
           setOpenModalEdit(false);
+          setIsLoading(false)
+          setIsLoading(false)
         });
     }
   }
@@ -253,6 +294,7 @@ export default function FuncionariosPage() {
   }, [searchDebounced]);
 
   return (
+    <>
     <Layout pageTitle="Funcionários">
       <div className="px-4 mb-5 mt-5 flex flex-col gap-4 lg:flex-row lg:justify-center">
         <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 shadow-md w-full md:w-auto">
@@ -269,7 +311,7 @@ export default function FuncionariosPage() {
 
         <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 shadow-md w-full md:w-auto">
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Selecione a company:
+            Selecione a compania:
           </label>
           <select
             className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
@@ -291,7 +333,8 @@ export default function FuncionariosPage() {
         actionButton="Deletar"
         open={openModalDelete}
         onClose={() => setOpenModalDelete(false)}
-        onSend={() => handleDeleteEmployee()}
+        onSend={handleDeleteEmployee}
+        isFetching={loading}
       >
         <p className="text-base mb-6">
           Tem certeza que deseja deletar o registro de{" "}
@@ -303,8 +346,9 @@ export default function FuncionariosPage() {
         title="Editar"
         actionButton="Editar"
         open={openModalEdit}
-        onClose={() => setOpenModalEdit(false)}
-        onSend={() => handleUpdateEmployee()}
+        onClose={closeModalEdit}
+        onSend={handleUpdateEmployee}
+        isFetching={loading}
       >
         {row ? (
           <div className="flex flex-col gap-4">
@@ -382,6 +426,7 @@ export default function FuncionariosPage() {
         open={openModalTicket}
         onClose={() => setOpenModalTicket(false)}
         onSend={handleSendTickets}
+        isFetching={loading}
       >
         {row ? (
           <TicketArrayFields
@@ -397,8 +442,9 @@ export default function FuncionariosPage() {
       <ModalBase
         title="Adicionar PDF"
         open={openModalAddPdf}
-        onClose={() => setOpenModalAddPdf(false)}
+        onClose={closeModalPdf}
         onSend={handleActionPDF}
+        isFetching={loading}
       >
         <div>
           <input
@@ -447,8 +493,9 @@ export default function FuncionariosPage() {
       <ModalBase
         title="Adicionar Falta"
         open={openModalAbsent}
-        onClose={() => setOpenModalAbsent(false)}
+        onClose={closeModalAbsent}
         onSend={handleCreateAbsence}
+        isFetching={loading}
       >
         <div className="mb-3">
           <input
@@ -536,5 +583,9 @@ export default function FuncionariosPage() {
         />
       </div>
     </Layout>
+      {toast && (
+        <Toast type={toast.type} message={toast.message} isClose={setToast} />
+      )}
+    </>
   );
 }

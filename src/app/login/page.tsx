@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Icons } from "@/components/Icons";
 import { useAuth } from "@/service/hooks/AuthQuery";
 import Cookies from "js-cookie";
+import { Toast } from "@/components/Toast";
 
 export default function LoginPage() {
   const authMutation = useAuth();
@@ -18,6 +19,14 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
+
+  const [toast, setToast] = useState<
+    { type: "success" | "error"; message: string } | undefined
+  >();
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ type, message });
+  };
 
   function validate() {
     const newErrors: typeof errors = {};
@@ -75,6 +84,7 @@ export default function LoginPage() {
         setShake(true);
         setLoading(false);
         setTimeout(() => setShake(false), 500);
+        showToast("falha ao realizar login", "success");
       });
   }
 
@@ -165,6 +175,10 @@ export default function LoginPage() {
           </motion.div>
         </motion.div>
       </AnimatePresence>
+
+      {toast && (
+          <Toast type={toast.type} message={toast.message} isClose={setToast} />
+      )}
     </div>
   );
 }
