@@ -61,25 +61,25 @@ export function TicketArrayFields({
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 w-full">
       {tickets.map((ticket, index) => (
         <div
           key={ticket.id}
-          className="flex gap-3 items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 p-3 rounded-lg shadow-sm"
+          className="flex flex-col sm:flex-row sm:items-center gap-3 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 p-3 rounded-lg shadow-sm w-full"
         >
-          <span className="text-sm text-gray-500 dark:text-gray-400">
+          <div className="text-sm text-gray-500 dark:text-gray-400 shrink-0">
             #{index + 1}
-          </span>
+          </div>
           <input
             inputMode="numeric"
             pattern="[0-9]*"
             value={formatCurrency(ticket.value)}
             onChange={(e) => updateTicketValue(ticket.id, e.target.value)}
-            className="flex-1 px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-auto"
           />
           <button
             onClick={() => removeTicket(ticket.id)}
-            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg transition-colors"
+            className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg transition-colors w-full sm:w-auto"
           >
             Remover
           </button>

@@ -68,9 +68,6 @@ export default function LoginPage() {
             setLoading(false);
             setTimeout(() => setShake(false), 500);
           },
-          onSuccess: () => {
-            setLoading(false);
-          },
         }
       )
       .then((response) => {
@@ -84,7 +81,7 @@ export default function LoginPage() {
         setShake(true);
         setLoading(false);
         setTimeout(() => setShake(false), 500);
-        showToast("falha ao realizar login", "success");
+        showToast("falha ao realizar login", "error");
       });
   }
 
@@ -107,71 +104,80 @@ export default function LoginPage() {
               Entrar
             </h2>
 
-            <div className="mb-4">
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className={`w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                  errors.email
-                    ? "border-red-500 dark:border-red-400"
-                    : "border-gray-300 dark:border-gray-600"
-                }`}
-                placeholder="email@exemplo.com"
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-              )}
-            </div>
-
-            <div className="mb-6">
-              <label className="block text-gray-700 dark:text-gray-300 mb-2">
-                Senha
-              </label>
-              <input
-                type="password"
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className={`w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
-                  errors.password
-                    ? "border-red-500 dark:border-red-400"
-                    : "border-gray-300 dark:border-gray-600"
-                }`}
-                placeholder="******"
-              />
-              {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-              )}
-            </div>
-
-            {error && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-red-500 text-sm mb-4 text-center"
-              >
-                {error}
-              </motion.div>
-            )}
-
-            <button
-              onClick={handleLogin}
-              disabled={loading}
-              className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition"
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleLogin();
+              }}
             >
-              {loading ? (
-                <Icons
-                  name="FiLoader"
-                  size={24}
-                  className="animate-spin inline-block"
+              <div className="mb-4">
+                <label className="block text-gray-700 dark:text-gray-300 mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className={`w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
+                    errors.email
+                      ? "border-red-500 dark:border-red-400"
+                      : "border-gray-300 dark:border-gray-600"
+                  }`}
+                  placeholder="email@exemplo.com"
                 />
-              ) : (
-                "Entrar"
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                )}
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-gray-700 dark:text-gray-300 mb-2">
+                  Senha
+                </label>
+                <input
+                  type="password"
+                  value={form.password}
+                  onChange={(e) =>
+                    setForm({ ...form, password: e.target.value })
+                  }
+                  className={`w-full px-4 py-2 border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white ${
+                    errors.password
+                      ? "border-red-500 dark:border-red-400"
+                      : "border-gray-300 dark:border-gray-600"
+                  }`}
+                  placeholder="******"
+                />
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                )}
+              </div>
+
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-red-500 text-sm mb-4 text-center"
+                >
+                  {error}
+                </motion.div>
               )}
-            </button>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition"
+              >
+                {loading ? (
+                  <Icons
+                    name="FiLoader"
+                    size={24}
+                    className="animate-spin inline-block"
+                  />
+                ) : (
+                  "Entrar"
+                )}
+              </button>
+            </form>
           </motion.div>
         </motion.div>
       </AnimatePresence>

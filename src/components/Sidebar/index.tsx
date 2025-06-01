@@ -8,8 +8,26 @@ import { SidebarMenu } from "./const";
 import { MenuItem } from "./MenuItem";
 import { SidebarProps } from "./types";
 import Cookie from "js-cookie";
+import { useEffect, useState } from "react";
+import { getUserRoleFromToken } from "@/utils/role";
+import { roleEnum } from "./MenuItem/types";
 
 export function Sidebar({ show, setter }: SidebarProps) {
+  const [role, setRole] = useState<roleEnum>(roleEnum.user);
+
+  useEffect(() => {
+    const r = getUserRoleFromToken();
+    if (r && Object.values(roleEnum).includes(r as unknown as roleEnum)) {
+      setRole(r as unknown as roleEnum);
+    } else {
+      setRole(roleEnum.user);
+    }
+  }, []);
+
+  const filteredMenu = SidebarMenu.filter(
+    (item) => !item.roles || item.roles.includes(role)
+  );
+
   const oldVal = () => (oldVal: boolean) => !oldVal;
   const router = useRouter();
 
@@ -46,7 +64,7 @@ export function Sidebar({ show, setter }: SidebarProps) {
           </Link>
         </div>
         <div className="mt-9 flex flex-col gap-2">
-          {SidebarMenu.map((item) => (
+          {filteredMenu.map((item) => (
             <MenuItem
               key={item.id}
               setter={oldVal}
