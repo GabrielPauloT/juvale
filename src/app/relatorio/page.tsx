@@ -19,7 +19,7 @@ type Data = {
 export default function RelatorioPage() {
   const [openModal, setOpenModal] = useState(false);
   const [row, setRow] = useState<Data>();
-  const [loading, setIsLoading] = useState(false)
+  const [loading, setIsLoading] = useState(false);
   const [date, setDate] = useState("");
 
   const [toast, setToast] = useState<
@@ -50,7 +50,7 @@ export default function RelatorioPage() {
 
   const handleImprimirRelatorio = useCallback(() => {
     if (row?.id === 1) {
-      setIsLoading(true)
+      setIsLoading(true);
       reportsCompany(date, "Relatório de Gastos por Empresa")
         .then(() => {
           showToast("Relatório gerado com sucesso", "success");
@@ -60,10 +60,10 @@ export default function RelatorioPage() {
         })
         .finally(() => {
           setOpenModal((openModal) => !openModal);
-          setIsLoading(false)
+          setIsLoading(false);
         });
     } else if (row?.id === 2) {
-      setIsLoading(true)
+      setIsLoading(true);
       reportsCompanyEmployee(date, "Relatório de Gastos por Funcionário")
         .then(() => {
           showToast("Relatório gerado com sucesso", "success");
@@ -73,10 +73,10 @@ export default function RelatorioPage() {
         })
         .finally(() => {
           setOpenModal((openModal) => !openModal);
-          setIsLoading(false)
+          setIsLoading(false);
         });
     } else if (row?.id === 3) {
-      setIsLoading(true)
+      setIsLoading(true);
       reportsCompanyEmployeeWithAbsences(
         date,
         "Relatório de Gastos por Funcionário (com Faltas)"
@@ -89,7 +89,7 @@ export default function RelatorioPage() {
         })
         .finally(() => {
           setOpenModal((openModal) => !openModal);
-          setIsLoading(false)
+          setIsLoading(false);
         });
     }
   }, [date, row?.id]);
@@ -129,7 +129,7 @@ export default function RelatorioPage() {
         </p>
       </ModalBase>
       {toast && (
-          <Toast type={toast.type} message={toast.message} isClose={setToast} />
+        <Toast type={toast.type} message={toast.message} isClose={setToast} />
       )}
     </>
   );

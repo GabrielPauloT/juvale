@@ -177,7 +177,7 @@ export default function LoginPage() {
       </AnimatePresence>
 
       {toast && (
-          <Toast type={toast.type} message={toast.message} isClose={setToast} />
+        <Toast type={toast.type} message={toast.message} isClose={setToast} />
       )}
     </div>
   );
