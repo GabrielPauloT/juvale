@@ -1,11 +1,11 @@
-import { ReactNode } from "react"
+import { ReactNode } from "react";
 
 export type ModalBaseProps = {
-    title: string,
-    open: boolean,
-    onClose: () => void,
-    onSend: () => void,
-    children: ReactNode,
-    actionButton?: string,
-    isFetching?: boolean
-}
+  title: string;
+  open: boolean;
+  onClose: () => void;
+  onSend: () => void;
+  children: ReactNode;
+  actionButton?: string;
+  isFetching?: boolean;
+};

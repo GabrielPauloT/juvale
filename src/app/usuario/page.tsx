@@ -16,7 +16,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { ReactQueryKeysEnum } from "@/@types";
 import { Toast } from "@/components/Toast";
 
-
 export default function UsuariosPage() {
   const queryCliente = useQueryClient();
   const [openModalEdit, setOpenModalEdit] = useState(false);
@@ -47,8 +46,7 @@ export default function UsuariosPage() {
     setToast({ type, message });
   };
 
-  const [loading, setIsLoading] = useState(false)
-
+  const [loading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (row) {
@@ -60,7 +58,7 @@ export default function UsuariosPage() {
 
   const handleEdit = useCallback(() => {
     if (row) {
-      setIsLoading(true)
+      setIsLoading(true);
       updateUserMutation
         .mutateAsync({
           id: row.id,
@@ -85,7 +83,7 @@ export default function UsuariosPage() {
         })
         .finally(() => {
           setOpenModalEdit(false);
-          setIsLoading(false)
+          setIsLoading(false);
         });
     }
   }, [
@@ -100,7 +98,7 @@ export default function UsuariosPage() {
   ]);
 
   const handleCreate = useCallback(() => {
-    setIsLoading(true)
+    setIsLoading(true);
     createUserMutation
       .mutateAsync({
         email: email,
@@ -122,7 +120,7 @@ export default function UsuariosPage() {
       })
       .finally(() => {
         setOpenModalCreate(false);
-        setIsLoading(false)
+        setIsLoading(false);
       });
   }, [
     createUserMutation,
@@ -136,7 +134,7 @@ export default function UsuariosPage() {
 
   const handleDelete = useCallback(() => {
     if (row) {
-      setIsLoading(true)
+      setIsLoading(true);
       deleteUserMutation
         .mutateAsync(row.id)
         .then(() => {
@@ -153,7 +151,7 @@ export default function UsuariosPage() {
         })
         .finally(() => {
           setOpenModalDelete(false);
-          setIsLoading(false)
+          setIsLoading(false);
         });
     }
   }, [row, deleteUserMutation, queryCliente, data]);

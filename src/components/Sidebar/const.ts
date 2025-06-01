@@ -1,4 +1,4 @@
-import { MenuProps } from "./MenuItem/types";
+import { MenuProps, roleEnum } from "./MenuItem/types";
 
 export const SidebarMenu: MenuProps[] = [
   {
@@ -7,7 +7,7 @@ export const SidebarMenu: MenuProps[] = [
     title: "Dashboard",
     icon: "BsGraphUpArrow",
     path: "/dashboard",
-    roles: ["user"],
+    roles: [roleEnum.user, roleEnum.admin],
   },
   {
     id: 4,
@@ -15,7 +15,7 @@ export const SidebarMenu: MenuProps[] = [
     title: "Funcionários",
     icon: "BsFilePerson",
     path: "/funcionario",
-    roles: ["user"],
+    roles: [roleEnum.user, roleEnum.admin],
   },
   {
     id: 5,
@@ -23,7 +23,7 @@ export const SidebarMenu: MenuProps[] = [
     title: "Usuários",
     icon: "BsPerson",
     path: "/usuario",
-    roles: ["admin"],
+    roles: [roleEnum.admin],
   },
   {
     id: 6,
@@ -31,6 +31,6 @@ export const SidebarMenu: MenuProps[] = [
     title: "Relatório",
     icon: "MdReport",
     path: "/relatorio",
-    roles: ["user"],
+    roles: [roleEnum.user, roleEnum.admin],
   },
 ];

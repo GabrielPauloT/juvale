@@ -4,7 +4,11 @@ import { DataTable } from "@/components/DataTable";
 import { Icons } from "@/components/Icons";
 import { Layout } from "@/components/Layout";
 import { ModalBase } from "@/components/ModalBase";
-import { useDeleteEmployee, useEditEmployee, UseEmployee } from "@/service/hooks/UseEmployee";
+import {
+  useDeleteEmployee,
+  useEditEmployee,
+  UseEmployee,
+} from "@/service/hooks/UseEmployee";
 import { EmployeeResponseType } from "@/service/types/employee";
 import { SetStateAction, useCallback, useEffect, useState } from "react";
 import { debounce } from "lodash";
@@ -33,7 +37,6 @@ export default function FuncionariosPage() {
   const [selectedCompany, setSelectedCompany] = useState<number | null>(null);
   const [selectedCompanyPDF, setSelectedCompanyPDF] = useState<number>();
 
-
   const { data } = UseEmployee({
     page,
     perPage,
@@ -45,10 +48,9 @@ export default function FuncionariosPage() {
   const deleteEmployeerMutation = useDeleteEmployee();
   const updateEmployeerMutation = useEditEmployee();
   const createAbsenceMutation = useCreateAbsence();
-  const uploadPDF = useUploadPDF()
-  const inactivePDF = useInactivePDF()
-  const createTicket = useCreateTicket()
-
+  const uploadPDF = useUploadPDF();
+  const inactivePDF = useInactivePDF();
+  const createTicket = useCreateTicket();
 
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const [openModalEdit, setOpenModalEdit] = useState(false);
@@ -57,37 +59,35 @@ export default function FuncionariosPage() {
   const [openModalTicket, setOpenModalTicket] = useState(false);
   const [editedTickets, setEditedTickets] = useState<requestTicket[]>([]);
   const [row, setRow] = useState<EmployeeResponseType>();
-  const [nameEmployee, setNameEmployee] = useState("")
-  const [jobDescription, setJobDescription] = useState("")
-  const [salary, setSalary] = useState<number|string>(0)
-  const [vr, setVr] = useState(0)
-  const [date, setDate] = useState('')
-  const [certificateAbsence, setCertificateAbsence] = useState(false)
-  const [addFuncionario, setAddFuncionario] = useState(false)
-  const [pdf, setPdf] = useState<File>()
-    const [toast, setToast] = useState<
+  const [nameEmployee, setNameEmployee] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+  const [salary, setSalary] = useState<number | string>(0);
+  const [vr, setVr] = useState(0);
+  const [date, setDate] = useState("");
+  const [certificateAbsence, setCertificateAbsence] = useState(false);
+  const [addFuncionario, setAddFuncionario] = useState(false);
+  const [pdf, setPdf] = useState<File>();
+  const [toast, setToast] = useState<
     { type: "success" | "error"; message: string } | undefined
   >();
 
-    const showToast = (message: string, type: "success" | "error") => {
+  const showToast = (message: string, type: "success" | "error") => {
     setToast({ type, message });
   };
-
 
   const [selectedCompanyRow, setSelectedCompanyRow] = useState<number | null>(
     null
   );
 
-  const [loading, setIsLoading] = useState(false)
-
+  const [loading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (row) {
       setSelectedCompanyRow(row.company.id);
-      setNameEmployee(row.name)
-      setJobDescription(row.jobDescription)
-      setSalary(row.salary ? row.salary : 0)
-      setVr(row.vrPerDay ? row.vrPerDay : 0)
+      setNameEmployee(row.name);
+      setJobDescription(row.jobDescription);
+      setSalary(row.salary ? row.salary : 0);
+      setVr(row.vrPerDay ? row.vrPerDay : 0);
     }
   }, [row]);
 
@@ -95,24 +95,24 @@ export default function FuncionariosPage() {
     setOpenModalAddPdf(true);
   }
 
-  function closeModalPdf () {
-    setOpenModalAddPdf(false)
-    setAddFuncionario(false)
+  function closeModalPdf() {
+    setOpenModalAddPdf(false);
+    setAddFuncionario(false);
   }
 
-  function closeModalAbsent () {
-    setOpenModalAbsent(false)
-    setCertificateAbsence(false)
-    setDate("")
+  function closeModalAbsent() {
+    setOpenModalAbsent(false);
+    setCertificateAbsence(false);
+    setDate("");
   }
 
   function closeModalEdit() {
-    setOpenModalEdit(false)
+    setOpenModalEdit(false);
     setSelectedCompanyRow(null);
-    setNameEmployee("")
-    setJobDescription("")
-    setSalary(0)
-    setVr(0)
+    setNameEmployee("");
+    setJobDescription("");
+    setSalary(0);
+    setVr(0);
   }
 
   const handleAddTicket = useCallback((row: EmployeeResponseType) => {
@@ -123,8 +123,8 @@ export default function FuncionariosPage() {
 
   function handleSendTickets() {
     if (!!row) {
-      setIsLoading(true)
-        createTicket
+      setIsLoading(true);
+      createTicket
         .mutateAsync(editedTickets)
         .then(() => {
           showToast("Ticket adicionado com sucesso", "success");
@@ -137,7 +137,7 @@ export default function FuncionariosPage() {
         })
         .finally(() => {
           setOpenModalTicket(false);
-          setIsLoading(false)
+          setIsLoading(false);
         });
     }
   }
@@ -154,10 +154,10 @@ export default function FuncionariosPage() {
   }, []);
 
   function handleActionPDF() {
-      if (addFuncionario && pdf && selectedCompanyPDF) {
-        setIsLoading(true)
-        uploadPDF
-        .mutateAsync({pdf: pdf, companyId: selectedCompanyPDF.toString()})
+    if (addFuncionario && pdf && selectedCompanyPDF) {
+      setIsLoading(true);
+      uploadPDF
+        .mutateAsync({ pdf: pdf, companyId: selectedCompanyPDF.toString() })
         .then(() => {
           showToast("Pdf inserido com sucesso", "success");
           queryCliente.invalidateQueries({
@@ -169,13 +169,13 @@ export default function FuncionariosPage() {
         })
         .finally(() => {
           setOpenModalAddPdf(false);
-          setIsLoading(false)
+          setIsLoading(false);
         });
-      }
+    }
 
-      if(!addFuncionario && pdf) {
-        setIsLoading(true)
-        inactivePDF
+    if (!addFuncionario && pdf) {
+      setIsLoading(true);
+      inactivePDF
         .mutateAsync(pdf)
         .then(() => {
           showToast("Pdf inserido com sucesso", "success");
@@ -188,16 +188,20 @@ export default function FuncionariosPage() {
         })
         .finally(() => {
           setOpenModalAddPdf(false);
-          setIsLoading(false)
+          setIsLoading(false);
         });
-      }
+    }
   }
 
   function handleCreateAbsence() {
     if (!!row) {
-      setIsLoading(true)
+      setIsLoading(true);
       createAbsenceMutation
-        .mutateAsync({codeEmployee: row?.codeEmployee, absenceDate: date, certificateAbsence: certificateAbsence})
+        .mutateAsync({
+          codeEmployee: row?.codeEmployee,
+          absenceDate: date,
+          certificateAbsence: certificateAbsence,
+        })
         .then(() => {
           showToast("Falta adicionada com sucesso", "success");
           queryCliente.invalidateQueries({
@@ -209,14 +213,14 @@ export default function FuncionariosPage() {
         })
         .finally(() => {
           setOpenModalAbsent(false);
-          setIsLoading(false)
+          setIsLoading(false);
         });
     }
   }
 
   function handleDeleteEmployee() {
     if (!!row) {
-      setIsLoading(true)
+      setIsLoading(true);
       deleteEmployeerMutation
         .mutateAsync(row?.codeEmployee)
         .then(() => {
@@ -233,7 +237,7 @@ export default function FuncionariosPage() {
         })
         .finally(() => {
           setOpenModalDelete(false);
-          setIsLoading(false)
+          setIsLoading(false);
         });
     }
   }
@@ -244,12 +248,12 @@ export default function FuncionariosPage() {
       name: nameEmployee,
       jobDescription: jobDescription,
       salary: salary,
-      snackValue: vr
-    }
+      snackValue: vr,
+    };
     if (!!row) {
-      setIsLoading(true)
+      setIsLoading(true);
       updateEmployeerMutation
-        .mutateAsync({codeEmployee: row?.codeEmployee, data: data})
+        .mutateAsync({ codeEmployee: row?.codeEmployee, data: data })
         .then(() => {
           showToast("Usuário editado com sucesso", "success");
           queryCliente.invalidateQueries({
@@ -261,8 +265,8 @@ export default function FuncionariosPage() {
         })
         .finally(() => {
           setOpenModalEdit(false);
-          setIsLoading(false)
-          setIsLoading(false)
+          setIsLoading(false);
+          setIsLoading(false);
         });
     }
   }
@@ -295,83 +299,203 @@ export default function FuncionariosPage() {
 
   return (
     <>
-    <Layout pageTitle="Funcionários">
-      <div className="px-4 mb-5 mt-5 flex flex-col gap-4 lg:flex-row lg:justify-center">
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 shadow-md w-full md:w-auto">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Selecione a data:
-          </label>
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
-          />
-        </div>
+      <Layout pageTitle="Funcionários">
+        <div className="px-4 mb-5 mt-5 flex flex-col gap-4 lg:flex-row lg:justify-center">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 shadow-md w-full md:w-auto">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Selecione a data:
+            </label>
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
+            />
+          </div>
 
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 shadow-md w-full md:w-auto">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Selecione a compania:
-          </label>
-          <select
-            className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
-            value={selectedCompany ?? ""}
-            onChange={(e) => setSelectedCompany(Number(e.target.value))}
-          >
-            <option value="" disabled>Selecione uma empresa</option>
-            {company?.data?.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <ModalBase
-        title="Deletar"
-        actionButton="Deletar"
-        open={openModalDelete}
-        onClose={() => setOpenModalDelete(false)}
-        onSend={handleDeleteEmployee}
-        isFetching={loading}
-      >
-        <p className="text-base mb-6">
-          Tem certeza que deseja deletar o registro de{" "}
-          {row?.name ? row.name : "{sem nome}"}
-        </p>
-      </ModalBase>
-
-      <ModalBase
-        title="Editar"
-        actionButton="Editar"
-        open={openModalEdit}
-        onClose={closeModalEdit}
-        onSend={handleUpdateEmployee}
-        isFetching={loading}
-      >
-        {row ? (
-          <div className="flex flex-col gap-4">
-            <div className="w-full flex flex-col gap-1">
-              <p className="text-sm">Nome:</p>
-              <input
-                type="text"
-                placeholder="Nome"
-                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                defaultValue={row?.name ? row.name : "{sem Nome}"}
-                onChange={(e) => setNameEmployee(e.target.value)}
-              />
-            </div>
-            <div className="w-full flex flex-col gap-1">
-              <p className="text-sm">Compania:</p>
-              <select
-                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={selectedCompanyRow ?? ""}
-                onChange={(e) => setSelectedCompanyRow(Number(e.target.value))}
-              >
-                <option value="" disabled>
-                  Selecione uma empresa
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 shadow-md w-full md:w-auto">
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Selecione a compania:
+            </label>
+            <select
+              className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
+              value={selectedCompany ?? ""}
+              onChange={(e) => setSelectedCompany(Number(e.target.value))}
+            >
+              <option value="">Selecione uma compania</option>
+              {company?.data?.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
                 </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <ModalBase
+          title="Deletar"
+          actionButton="Deletar"
+          open={openModalDelete}
+          onClose={() => setOpenModalDelete(false)}
+          onSend={handleDeleteEmployee}
+          isFetching={loading}
+        >
+          <p className="text-base mb-6">
+            Tem certeza que deseja deletar o registro de{" "}
+            {row?.name ? row.name : "{sem nome}"}
+          </p>
+        </ModalBase>
+
+        <ModalBase
+          title="Editar"
+          actionButton="Editar"
+          open={openModalEdit}
+          onClose={closeModalEdit}
+          onSend={handleUpdateEmployee}
+          isFetching={loading}
+        >
+          {row ? (
+            <div className="flex flex-col gap-4">
+              <div className="w-full flex flex-col gap-1">
+                <p className="text-sm">Nome:</p>
+                <input
+                  type="text"
+                  placeholder="Nome"
+                  className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  defaultValue={row?.name ? row.name : "{sem Nome}"}
+                  onChange={(e) => setNameEmployee(e.target.value)}
+                />
+              </div>
+              <div className="w-full flex flex-col gap-1">
+                <p className="text-sm">Compania:</p>
+                <select
+                  className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={selectedCompanyRow ?? ""}
+                  onChange={(e) =>
+                    setSelectedCompanyRow(Number(e.target.value))
+                  }
+                >
+                  <option value="" disabled>
+                    Selecione uma compania
+                  </option>
+                  {company?.data?.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="w-full flex flex-col gap-1">
+                <p className="text-sm">Ocupação:</p>
+                <input
+                  type="text"
+                  placeholder="Ocupação"
+                  className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  defaultValue={
+                    row?.jobDescription ? row.jobDescription : "{sem Ocupação}"
+                  }
+                  onChange={(e) => setJobDescription(e.target.value)}
+                />
+              </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <p className="text-sm">Salário:</p>
+                <input
+                  type="text"
+                  placeholder="VR"
+                  className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  defaultValue={row?.salary ? row.salary : 0.0}
+                  onChange={(e) => setSalary(Number(e.target.value))}
+                />
+              </div>
+
+              <div className="w-full flex flex-col gap-1">
+                <p className="text-sm">VR gasto por dia:</p>
+                <input
+                  type="text"
+                  placeholder="VR"
+                  className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  defaultValue={row?.vrPerDay ? row.vrPerDay : 0.0}
+                  onChange={(e) => setVr(Number(e.target.value))}
+                />
+              </div>
+            </div>
+          ) : (
+            <div>
+              <p>Sem Dados</p>
+            </div>
+          )}
+        </ModalBase>
+
+        <ModalBase
+          title="Adicionar Ticket"
+          open={openModalTicket}
+          onClose={() => setOpenModalTicket(false)}
+          onSend={handleSendTickets}
+          isFetching={loading}
+        >
+          {row ? (
+            <TicketArrayFields
+              codeEmployee={row?.codeEmployee}
+              data={row?.ticket}
+              onChange={setEditedTickets}
+            />
+          ) : (
+            <p>Sem Dados</p>
+          )}
+        </ModalBase>
+
+        <ModalBase
+          title="Adicionar PDF"
+          open={openModalAddPdf}
+          onClose={closeModalPdf}
+          onSend={handleActionPDF}
+          isFetching={loading}
+        >
+          <div>
+            <input
+              type="file"
+              accept="application/pdf"
+              className="w-full mb-4 px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(event) => {
+                if (event.target.files && event.target.files.length > 0) {
+                  setPdf(event.target.files[0]);
+                }
+              }}
+            />
+          </div>
+          <div className="flex flex-col items-start justify-start gap-2">
+            <div>
+              <input
+                type="radio"
+                name="pdfType"
+                value="tipo1"
+                onClick={() => setAddFuncionario(true)}
+              />{" "}
+              <span>Adicionar funcionário</span>
+            </div>
+            <div>
+              <input
+                type="radio"
+                name="pdfType"
+                value="tipo2"
+                onClick={() => setAddFuncionario(false)}
+              />{" "}
+              <span>Desativar funcionário</span>
+            </div>
+          </div>
+
+          {addFuncionario ? (
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 shadow-md w-full md:w-auto mt-4">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Selecione a compania:
+              </label>
+              <select
+                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
+                value={selectedCompanyPDF ?? ""}
+                onChange={(e) => setSelectedCompanyPDF(Number(e.target.value))}
+              >
+                <option value="">Selecione uma compania</option>
                 {company?.data?.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
@@ -379,210 +503,107 @@ export default function FuncionariosPage() {
                 ))}
               </select>
             </div>
-            <div className="w-full flex flex-col gap-1">
-              <p className="text-sm">Ocupação:</p>
-              <input
-                type="text"
-                placeholder="Ocupação"
-                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                defaultValue={
-                  row?.jobDescription ? row.jobDescription : "{sem Ocupação}"
-                }
-                onChange={(e) => setJobDescription(e.target.value)}
-              />
-            </div>
+          ) : null}
+        </ModalBase>
 
-            <div className="w-full flex flex-col gap-1">
-              <p className="text-sm">Salário:</p>
-              <input
-                type="text"
-                placeholder="VR"
-                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                defaultValue={row?.salary ? row.salary : 0.0}
-                onChange={(e) => setSalary(Number(e.target.value))}
-              />
-            </div>
-
-            <div className="w-full flex flex-col gap-1">
-              <p className="text-sm">VR gasto por dia:</p>
-              <input
-                type="text"
-                placeholder="VR"
-                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                defaultValue={row?.vrPerDay ? row.vrPerDay : 0.0}
-                onChange={(e) => setVr(Number(e.target.value))}
-              />
-            </div>
+        <ModalBase
+          title="Adicionar Falta"
+          open={openModalAbsent}
+          onClose={closeModalAbsent}
+          onSend={handleCreateAbsence}
+          isFetching={loading}
+        >
+          <div className="mb-3">
+            <input
+              type="date"
+              className="w-full px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onChange={(e) => setDate(e.target.value)}
+            />
           </div>
-        ) : (
-          <div>
-            <p>Sem Dados</p>
+          <div className="mb-3">
+            <input
+              type="checkbox"
+              name="pdfType"
+              value="tipo1"
+              onClick={() => setCertificateAbsence(!certificateAbsence)}
+            />{" "}
+            <span>Possui atestado</span>
           </div>
-        )}
-      </ModalBase>
+        </ModalBase>
 
-      <ModalBase
-        title="Adicionar Ticket"
-        open={openModalTicket}
-        onClose={() => setOpenModalTicket(false)}
-        onSend={handleSendTickets}
-        isFetching={loading}
-      >
-        {row ? (
-          <TicketArrayFields
-            codeEmployee={row?.codeEmployee}
-            data={row?.ticket}
-            onChange={setEditedTickets}
-          />
-        ) : (
-          <p>Sem Dados</p>
-        )}
-      </ModalBase>
-
-      <ModalBase
-        title="Adicionar PDF"
-        open={openModalAddPdf}
-        onClose={closeModalPdf}
-        onSend={handleActionPDF}
-        isFetching={loading}
-      >
-        <div>
-          <input
-            type="file"
-            accept="application/pdf"
-            className="w-full mb-4 px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onChange={(event) => {
-              if (event.target.files && event.target.files.length > 0) {
-                setPdf(event.target.files[0]);
-              }
-            }}
-          />
-        </div>
-        <div className="flex flex-col items-start justify-start gap-2">
-          <div>
-            <input type="radio" name="pdfType" value="tipo1" onClick={() => setAddFuncionario(true)} />{" "}
-            <span>Adicionar funcionário</span>
-          </div>
-          <div>
-            <input type="radio" name="pdfType" value="tipo2" onClick={() => setAddFuncionario(false)} />{" "}
-            <span>Desativar funcionário</span>
-          </div>
-        </div>
-
-        {addFuncionario ? (
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 shadow-md w-full md:w-auto mt-4">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Selecione a company:
-          </label>
-          <select
-            className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
-            value={selectedCompanyPDF ?? ""}
-            onChange={(e) => setSelectedCompanyPDF(Number(e.target.value))}
-          >
-            <option value="">Selecione uma empresa</option>
-            {company?.data?.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        ) : null}
-      </ModalBase>
-
-      <ModalBase
-        title="Adicionar Falta"
-        open={openModalAbsent}
-        onClose={closeModalAbsent}
-        onSend={handleCreateAbsence}
-        isFetching={loading}
-      >
-        <div className="mb-3">
-          <input
-            type="date"
-            className="w-full px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onChange={(e) => setDate(e.target.value)}
-          />
-        </div>
-        <div className="mb-3">
-          <input type="checkbox" name="pdfType" value="tipo1" onClick={() => setCertificateAbsence(!certificateAbsence)} />{" "}
-          <span>Possui atestado</span>
-        </div>
-      </ModalBase>
-
-      <div
-        style={{
-          marginTop: "0.5rem",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-        }}
-      >
         <div
           style={{
-            width: "97%",
+            marginTop: "0.5rem",
             display: "flex",
             alignItems: "center",
-            justifyContent: "flex-end",
-            gap: "10px",
+            justifyContent: "center",
+            flexDirection: "column",
           }}
         >
-          <button
+          <div
             style={{
-              padding: "8px",
-              backgroundColor: "green",
-              color: "white",
-              borderRadius: "8px",
+              width: "97%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              gap: "10px",
             }}
-            onClick={handleAddPdf}
           >
-            <div
+            <button
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "10px",
+                padding: "8px",
+                backgroundColor: "green",
+                color: "white",
+                borderRadius: "8px",
               }}
+              onClick={handleAddPdf}
             >
-              <p style={{ fontWeight: "bold" }}>PDF</p>
-              <Icons name="MdOutlineAddCircle" size={20} />
-            </div>
-          </button>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "10px",
+                }}
+              >
+                <p style={{ fontWeight: "bold" }}>PDF</p>
+                <Icons name="MdOutlineAddCircle" size={20} />
+              </div>
+            </button>
+          </div>
+          <DataTable<EmployeeResponseType>
+            data={data?.data}
+            totalPages={data?.totalPages}
+            page={page}
+            onlyFields={[
+              "name",
+              "jobDescription",
+              "company.name",
+              "vtTotal",
+              "vtPerDay",
+              "vrTotal",
+              "vrPerDay",
+            ]}
+            columnLabels={{
+              name: "Nome",
+              jobDescription: "Cargo",
+              "company.name": "Empresa",
+              vtTotal: "Total VT",
+              vtPerDay: "Total VT por dia",
+              vrTotal: "Total VR",
+              vrPerDay: "VR por dia",
+            }}
+            onNextPageClick={() => setPage((page) => page + 1)}
+            onBackPageClick={() => setPage((page) => page - 1)}
+            onEditClick={handleEdit}
+            onDeleteClick={handleDelete}
+            onAddAbsentClick={handleAddAbsent}
+            onAddTicketClick={handleAddTicket}
+            searchValue={name}
+            onChangeSearchValue={handleChangeValueInput}
+          />
         </div>
-        <DataTable<EmployeeResponseType>
-          data={data?.data}
-          totalPages={data?.totalPages}
-          page={page}
-          onlyFields={[
-            "name",
-            "jobDescription",
-            "company.name",
-            "vtTotal",
-            "vtPerDay",
-            "vrTotal",
-            "vrPerDay",
-          ]}
-          columnLabels={{
-            name: "Nome",
-            jobDescription: "Cargo",
-            "company.name": "Empresa",
-            vtTotal: "Total VT",
-            vtPerDay: "Total VT por dia",
-            vrTotal: "Total VR",
-            vrPerDay: "VR por dia",
-          }}
-          onNextPageClick={() => setPage((page) => page + 1)}
-          onBackPageClick={() => setPage((page) => page - 1)}
-          onEditClick={handleEdit}
-          onDeleteClick={handleDelete}
-          onAddAbsentClick={handleAddAbsent}
-          onAddTicketClick={handleAddTicket}
-          searchValue={name}
-          onChangeSearchValue={handleChangeValueInput}
-        />
-      </div>
-    </Layout>
+      </Layout>
       {toast && (
         <Toast type={toast.type} message={toast.message} isClose={setToast} />
       )}

@@ -47,7 +47,9 @@ export function Modal({ onClose, open, infos, action }: ModalProps) {
                 type="text"
                 placeholder="Compania"
                 className="border border-black p-1 rounded-sm outline-none"
-                defaultValue={infos.Compania ? infos.Compania : "{sem Compania}"}
+                defaultValue={
+                  infos.Compania ? infos.Compania : "{sem Compania}"
+                }
               />
             </div>
             <div className="w-full flex flex-col gap-1">
@@ -56,7 +58,9 @@ export function Modal({ onClose, open, infos, action }: ModalProps) {
                 type="text"
                 placeholder="Ocupação"
                 className="border border-black p-1 rounded-sm outline-none"
-                defaultValue={infos.Ocupacao ? infos.Ocupacao : "{sem Ocupação}"}
+                defaultValue={
+                  infos.Ocupacao ? infos.Ocupacao : "{sem Ocupação}"
+                }
               />
             </div>
             <div className="w-full flex flex-col gap-1">
@@ -138,10 +142,7 @@ export function Modal({ onClose, open, infos, action }: ModalProps) {
         <div className="w-[80%] sm:w-[40%] bg-white text-black fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 rounded-lg">
           <h1 className="text-2xl mb-3">Adicionar Falta(s)</h1>
           <div className="mb-3">
-            <input
-              type="date"
-              className="border border-black p-1 w-full"
-            />
+            <input type="date" className="border border-black p-1 w-full" />
           </div>
           <div className="mb-3">
             <input type="checkbox" name="pdfType" value="tipo1" />{" "}

@@ -1,18 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
+import { jwtVerify } from "jose";
 
-export default function middleware(req: NextRequest) {
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.NEXT_PUBLIC_JWT_SECRET!
+);
+
+async function getRoleFromToken(token: string) {
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    return payload?.role;
+  } catch {
+    return null;
+  }
+}
+
+export async function middleware(req: NextRequest) {
   const token = req.cookies.get("auth_token")?.value;
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const dashboardURL = new URL("/dashboard", baseUrl);
+  if (!token) {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
 
-  if (!token && req.nextUrl.pathname !== "/login") {
-    return NextResponse.redirect(new URL("/login", baseUrl));
+  const role = await getRoleFromToken(token);
+
+  const isAdminRoute = req.nextUrl.pathname === "/usuario";
+
+  if (isAdminRoute && role !== "admin") {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
   if (req.nextUrl.pathname === "/") {
-    return NextResponse.redirect(dashboardURL);
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
+
+  return NextResponse.next();
 }
 
 export const config = {
@@ -22,7 +43,6 @@ export const config = {
     "/usuarios",
     "/funcionarios",
     "/relatorio",
-    "/vt",
-    "/vr",
+    "/usuario",
   ],
 };
