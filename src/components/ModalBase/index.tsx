@@ -1,3 +1,4 @@
+import { Spinner } from "../Spinner";
 import { ModalBaseProps } from "./ModalBase.types";
 
 export function ModalBase({
@@ -7,6 +8,7 @@ export function ModalBase({
   onSend,
   actionButton = "Enviar",
   open,
+  isFetching
 }: ModalBaseProps) {
   if (!open) return null;
 
@@ -17,22 +19,27 @@ export function ModalBase({
           {title}
         </h2>
 
-        <div className="mb-6">{children}</div>
-
-        <div className="flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-          >
-            Fechar
-          </button>
-          <button
-            onClick={onSend}
-            className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors"
-          >
-            {actionButton}
-          </button>
-        </div>
+        
+        {isFetching ? 
+            <div className="flex justify-center pb-6"><Spinner/></div> :
+            <div> 
+              <div className="mb-6">{children}</div>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={onClose}
+                  className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                >
+                  Fechar
+                </button>
+                <button
+                  onClick={onSend}
+                  className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors"
+                >
+                  {actionButton}
+                </button>
+              </div>
+            </div>
+        }
       </div>
     </div>
   );

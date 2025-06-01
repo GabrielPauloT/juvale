@@ -15,6 +15,7 @@ export default function DashboardPage() {
 
   const { data } = useCompanyEemployeeCost({ date: selectedDate });
 
+
   const funcionariosData = {
     labels: data?.data.map((item) => item.nameCompany) || [],
     datasets: [
