@@ -4,7 +4,11 @@ import { DataTable } from "@/components/DataTable";
 import { Icons } from "@/components/Icons";
 import { Layout } from "@/components/Layout";
 import { ModalBase } from "@/components/ModalBase";
-import { useDeleteEmployee, useEditEmployee, UseEmployee } from "@/service/hooks/UseEmployee";
+import {
+  useDeleteEmployee,
+  useEditEmployee,
+  UseEmployee,
+} from "@/service/hooks/UseEmployee";
 import { EmployeeResponseType } from "@/service/types/employee";
 import { SetStateAction, useCallback, useEffect, useState } from "react";
 import { debounce } from "lodash";
@@ -32,7 +36,6 @@ export default function FuncionariosPage() {
   const [selectedCompany, setSelectedCompany] = useState<number | null>(null);
   const [selectedCompanyPDF, setSelectedCompanyPDF] = useState<number>();
 
-
   const { data } = UseEmployee({
     page,
     perPage,
@@ -44,12 +47,9 @@ export default function FuncionariosPage() {
   const deleteEmployeerMutation = useDeleteEmployee();
   const updateEmployeerMutation = useEditEmployee();
   const createAbsenceMutation = useCreateAbsence();
-  const uploadPDF = useUploadPDF()
-  const inactivePDF = useInactivePDF()
-  const createTicket = useCreateTicket()
-
-
-
+  const uploadPDF = useUploadPDF();
+  const inactivePDF = useInactivePDF();
+  const createTicket = useCreateTicket();
 
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const [openModalEdit, setOpenModalEdit] = useState(false);
@@ -58,27 +58,26 @@ export default function FuncionariosPage() {
   const [openModalTicket, setOpenModalTicket] = useState(false);
   const [editedTickets, setEditedTickets] = useState<requestTicket[]>([]);
   const [row, setRow] = useState<EmployeeResponseType>();
-  const [nameEmployee, setNameEmployee] = useState("")
-  const [jobDescription, setJobDescription] = useState("")
-  const [salary, setSalary] = useState<number|string>(0)
-  const [vr, setVr] = useState(0)
-  const [date, setDate] = useState('')
-  const [certificateAbsence, setCertificateAbsence] = useState(false)
-  const [addFuncionario, setAddFuncionario] = useState(false)
-  const [pdf, setPdf] = useState<File>()
+  const [nameEmployee, setNameEmployee] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+  const [salary, setSalary] = useState<number | string>(0);
+  const [vr, setVr] = useState(0);
+  const [date, setDate] = useState("");
+  const [certificateAbsence, setCertificateAbsence] = useState(false);
+  const [addFuncionario, setAddFuncionario] = useState(false);
+  const [pdf, setPdf] = useState<File>();
 
   const [selectedCompanyRow, setSelectedCompanyRow] = useState<number | null>(
     null
   );
 
-
   useEffect(() => {
     if (row) {
       setSelectedCompanyRow(row.company.id);
-      setNameEmployee(row.name)
-      setJobDescription(row.jobDescription)
-      setSalary(row.salary ? row.salary : 0)
-      setVr(row.vrPerDay ? row.vrPerDay : 0)
+      setNameEmployee(row.name);
+      setJobDescription(row.jobDescription);
+      setSalary(row.salary ? row.salary : 0);
+      setVr(row.vrPerDay ? row.vrPerDay : 0);
     }
   }, [row]);
 
@@ -94,7 +93,7 @@ export default function FuncionariosPage() {
 
   function handleSendTickets() {
     if (!!row) {
-        createTicket
+      createTicket
         .mutateAsync(editedTickets)
         .then(() => {
           console.log("ticket adicionada com sucesso");
@@ -123,10 +122,10 @@ export default function FuncionariosPage() {
   }, []);
 
   function handleActionPDF() {
-      if (addFuncionario && pdf && selectedCompanyPDF) {
-        console.log("pdf", pdf)
-        uploadPDF
-        .mutateAsync({pdf: pdf, companyId: selectedCompanyPDF.toString()})
+    if (addFuncionario && pdf && selectedCompanyPDF) {
+      console.log("pdf", pdf);
+      uploadPDF
+        .mutateAsync({ pdf: pdf, companyId: selectedCompanyPDF.toString() })
         .then(() => {
           console.log("pdf inserido com sucesso");
           queryCliente.invalidateQueries({
@@ -139,10 +138,10 @@ export default function FuncionariosPage() {
         .finally(() => {
           setOpenModalAbsent(false);
         });
-      }
+    }
 
-      if(!addFuncionario && pdf) {
-        inactivePDF
+    if (!addFuncionario && pdf) {
+      inactivePDF
         .mutateAsync(pdf)
         .then(() => {
           console.log("pdf inserido com sucesso");
@@ -156,13 +155,17 @@ export default function FuncionariosPage() {
         .finally(() => {
           setOpenModalAbsent(false);
         });
-      }
+    }
   }
 
   function handleCreateAbsence() {
     if (!!row) {
       createAbsenceMutation
-        .mutateAsync({codeEmployee: row?.codeEmployee, absenceDate: date, certificateAbsence: certificateAbsence})
+        .mutateAsync({
+          codeEmployee: row?.codeEmployee,
+          absenceDate: date,
+          certificateAbsence: certificateAbsence,
+        })
         .then(() => {
           console.log("falta adicionada com sucesso");
           queryCliente.invalidateQueries({
@@ -206,11 +209,11 @@ export default function FuncionariosPage() {
       name: nameEmployee,
       jobDescription: jobDescription,
       salary: salary,
-      snackValue: vr
-    }
+      snackValue: vr,
+    };
     if (!!row) {
       updateEmployeerMutation
-        .mutateAsync({codeEmployee: row?.codeEmployee, data: data})
+        .mutateAsync({ codeEmployee: row?.codeEmployee, data: data })
         .then(() => {
           console.log("Usuario editado com sucesso");
           queryCliente.invalidateQueries({
@@ -276,7 +279,9 @@ export default function FuncionariosPage() {
             value={selectedCompany ?? ""}
             onChange={(e) => setSelectedCompany(Number(e.target.value))}
           >
-            <option value="" disabled>Selecione uma empresa</option>
+            <option value="" disabled>
+              Selecione uma empresa
+            </option>
             {company?.data?.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
@@ -414,33 +419,43 @@ export default function FuncionariosPage() {
         </div>
         <div className="flex flex-col items-start justify-start gap-2">
           <div>
-            <input type="radio" name="pdfType" value="tipo1" onClick={() => setAddFuncionario(true)} />{" "}
+            <input
+              type="radio"
+              name="pdfType"
+              value="tipo1"
+              onClick={() => setAddFuncionario(true)}
+            />{" "}
             <span>Adicionar funcionário</span>
           </div>
           <div>
-            <input type="radio" name="pdfType" value="tipo2" onClick={() => setAddFuncionario(false)} />{" "}
+            <input
+              type="radio"
+              name="pdfType"
+              value="tipo2"
+              onClick={() => setAddFuncionario(false)}
+            />{" "}
             <span>Desativar funcionário</span>
           </div>
         </div>
 
         {addFuncionario ? (
           <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 shadow-md w-full md:w-auto mt-4">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            Selecione a company:
-          </label>
-          <select
-            className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
-            value={selectedCompanyPDF ?? ""}
-            onChange={(e) => setSelectedCompanyPDF(Number(e.target.value))}
-          >
-            <option value="">Selecione uma empresa</option>
-            {company?.data?.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
+            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Selecione a company:
+            </label>
+            <select
+              className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
+              value={selectedCompanyPDF ?? ""}
+              onChange={(e) => setSelectedCompanyPDF(Number(e.target.value))}
+            >
+              <option value="">Selecione uma empresa</option>
+              {company?.data?.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
         ) : null}
       </ModalBase>
 
@@ -458,7 +473,12 @@ export default function FuncionariosPage() {
           />
         </div>
         <div className="mb-3">
-          <input type="checkbox" name="pdfType" value="tipo1" onClick={() => setCertificateAbsence(!certificateAbsence)} />{" "}
+          <input
+            type="checkbox"
+            name="pdfType"
+            value="tipo1"
+            onClick={() => setCertificateAbsence(!certificateAbsence)}
+          />{" "}
           <span>Possui atestado</span>
         </div>
       </ModalBase>
