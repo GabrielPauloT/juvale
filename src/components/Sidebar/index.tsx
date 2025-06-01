@@ -33,7 +33,7 @@ export function Sidebar({ show, setter }: SidebarProps) {
 
   function handleLogin() {
     Cookie.remove("auth_token");
-    router.push("/");
+    router.refresh();
   }
 
   const className =
