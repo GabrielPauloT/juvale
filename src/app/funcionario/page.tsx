@@ -367,14 +367,14 @@ export default function FuncionariosPage() {
 
           <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 shadow-md w-full md:w-auto">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Selecione a compania:
+              Selecione a empresa:
             </label>
             <select
               className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
               value={selectedCompany ?? ""}
               onChange={(e) => setSelectedCompany(Number(e.target.value))}
             >
-              <option value="">Selecione uma compania</option>
+              <option value="">Selecione uma empresa</option>
               {company?.data?.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -419,7 +419,7 @@ export default function FuncionariosPage() {
                 />
               </div>
               <div className="w-full flex flex-col gap-1">
-                <p className="text-sm">Compania:</p>
+                <p className="text-sm">Empresa:</p>
                 <select
                   className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={selectedCompanyRow ?? ""}
@@ -428,7 +428,7 @@ export default function FuncionariosPage() {
                   }
                 >
                   <option value="" disabled>
-                    Selecione uma compania
+                    Selecione uma empresa
                   </option>
                   {company?.data?.map((c) => (
                     <option key={c.id} value={c.id}>
@@ -498,13 +498,13 @@ export default function FuncionariosPage() {
               />
             </div>
             <div className="w-full flex flex-col gap-1">
-              <p className="text-sm">Compania:</p>
+              <p className="text-sm">Empresa:</p>
               <select
                 className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={selectedCompanyRow || ""}
                 onChange={(e) => setSelectedCompanyRow(Number(e.target.value))}
               >
-                <option value="">Selecione uma compania</option>
+                <option value="">Selecione uma empresa</option>
                 {company?.data?.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
@@ -596,14 +596,14 @@ export default function FuncionariosPage() {
           {addFuncionario ? (
             <div className="flex flex-col md:flex-row items-start md:items-center gap-2 md:gap-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 shadow-md w-full md:w-auto mt-4">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Selecione a compania:
+                Selecione a empresa:
               </label>
               <select
                 className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-auto"
                 value={selectedCompanyPDF ?? ""}
                 onChange={(e) => setSelectedCompanyPDF(Number(e.target.value))}
               >
-                <option value="">Selecione uma compania</option>
+                <option value="">Selecione uma empresa</option>
                 {company?.data?.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name}
