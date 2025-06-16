@@ -5,11 +5,15 @@ import { Icons } from "@/components/Icons";
 import { Layout } from "@/components/Layout";
 import { ModalBase } from "@/components/ModalBase";
 import {
+  useCreateEmployee,
   useDeleteEmployee,
   useEditEmployee,
   UseEmployee,
 } from "@/service/hooks/UseEmployee";
-import { EmployeeResponseType } from "@/service/types/employee";
+import {
+  CreateEmployeeType,
+  EmployeeResponseType,
+} from "@/service/types/employee";
 import { SetStateAction, useCallback, useEffect, useState } from "react";
 import { debounce } from "lodash";
 import { ReactQueryKeysEnum } from "@/@types";
@@ -17,19 +21,20 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCompany } from "@/service/hooks/CompanyQuery";
 import { TicketArrayFields } from "./TicketArrayFields";
 import { requestTicket } from "./TicketArrayFields/types";
-import { useCreateAbsence } from "@/service/hooks/UseAbsence";
+import { useCreateAbsence, useDeleteAbsence } from "@/service/hooks/UseAbsence";
 import { useInactivePDF, useUploadPDF } from "@/service/hooks/UsePdf";
 import { useCreateTicket } from "@/service/hooks/UseTicket";
 import { Toast } from "@/components/Toast";
+import { UseAbsence } from "@/service/hooks";
+import { formatCurrency } from "@/utils/currency";
 
 export default function FuncionariosPage() {
   const queryCliente = useQueryClient();
   const [page, setPage] = useState(1);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [perPage, setPerPage] = useState(10);
+
+  const [perPage] = useState(10);
   const [name, setName] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [companyId, setCompanyId] = useState(null);
+  const [employee, setEmployee] = useState("");
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -44,22 +49,31 @@ export default function FuncionariosPage() {
     date: selectedDate,
     name: searchDebounced.trim(),
   });
+
+  const { data: absenceDate, isLoading: isLoadingViewerAbsence } =
+    UseAbsence.UsefindByCodeEmployeeAndDate(employee, selectedDate);
+
   const { data: company } = useCompany({ page: 0, perPage: 100 });
   const deleteEmployeerMutation = useDeleteEmployee();
+  const deleteAbsenceMutation = useDeleteAbsence();
   const updateEmployeerMutation = useEditEmployee();
   const createAbsenceMutation = useCreateAbsence();
+  const createEmployeeMutation = useCreateEmployee();
   const uploadPDF = useUploadPDF();
   const inactivePDF = useInactivePDF();
   const createTicket = useCreateTicket();
 
   const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [openModalListAbsences, setOpenModalListAbsences] = useState(false);
   const [openModalEdit, setOpenModalEdit] = useState(false);
+  const [openModalCreate, setOpenModalCreate] = useState(false);
   const [openModalAddPdf, setOpenModalAddPdf] = useState(false);
   const [openModalAbsent, setOpenModalAbsent] = useState(false);
   const [openModalTicket, setOpenModalTicket] = useState(false);
   const [editedTickets, setEditedTickets] = useState<requestTicket[]>([]);
   const [row, setRow] = useState<EmployeeResponseType>();
   const [nameEmployee, setNameEmployee] = useState("");
+  const [codeEmployee, setCodeEmployee] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [salary, setSalary] = useState<number | string>(0);
   const [vr, setVr] = useState(0);
@@ -81,6 +95,12 @@ export default function FuncionariosPage() {
 
   const [loading, setIsLoading] = useState(false);
 
+  const handleVrChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const sanitized = e.target.value.replace(/[^\d]/g, "");
+    const numeric = Number(sanitized) / 100;
+    setVr(numeric);
+  };
+
   useEffect(() => {
     if (row) {
       setSelectedCompanyRow(row.company.id);
@@ -88,6 +108,7 @@ export default function FuncionariosPage() {
       setJobDescription(row.jobDescription);
       setSalary(row.salary ? row.salary : 0);
       setVr(row.vrPerDay ? row.vrPerDay : 0);
+      setEmployee(row.codeEmployee);
     }
   }, [row]);
 
@@ -108,6 +129,7 @@ export default function FuncionariosPage() {
 
   function closeModalEdit() {
     setOpenModalEdit(false);
+    setOpenModalCreate(false);
     setSelectedCompanyRow(null);
     setNameEmployee("");
     setJobDescription("");
@@ -205,14 +227,17 @@ export default function FuncionariosPage() {
         .then(() => {
           showToast("Falta adicionada com sucesso", "success");
           queryCliente.invalidateQueries({
+            queryKey: [ReactQueryKeysEnum.FIND_BY_CODE_EMPLOYEE_AND_DATE],
+          });
+          queryCliente.invalidateQueries({
             queryKey: [ReactQueryKeysEnum.EMPLOYEE_FINDALL],
           });
+          setOpenModalAbsent(false);
         })
         .catch(() => {
           showToast("Erro ao adicionar falta", "error");
         })
         .finally(() => {
-          setOpenModalAbsent(false);
           setIsLoading(false);
         });
     }
@@ -269,6 +294,33 @@ export default function FuncionariosPage() {
           setIsLoading(false);
         });
     }
+  }
+
+  function handleCreateEmployee() {
+    const data: CreateEmployeeType = {
+      codeEmployee: codeEmployee,
+      codeCompany: selectedCompanyRow,
+      name: nameEmployee,
+      jobDescription: jobDescription,
+      salary: 0,
+      snackValue: vr,
+    };
+    setIsLoading(true);
+    createEmployeeMutation
+      .mutateAsync({ data })
+      .then(() => {
+        showToast("Usuário cadastrado com sucesso", "success");
+        queryCliente.invalidateQueries({
+          queryKey: [ReactQueryKeysEnum.EMPLOYEE_FINDALL],
+        });
+      })
+      .catch(() => {
+        showToast("Erro ao cadastrar usuário", "error");
+      })
+      .finally(() => {
+        setOpenModalCreate(false);
+        setIsLoading(false);
+      });
   }
 
   const handleDelete = useCallback((row: EmployeeResponseType) => {
@@ -399,24 +451,15 @@ export default function FuncionariosPage() {
               </div>
 
               <div className="w-full flex flex-col gap-1">
-                <p className="text-sm">Salário:</p>
-                <input
-                  type="text"
-                  placeholder="VR"
-                  className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  defaultValue={row?.salary ? row.salary : 0.0}
-                  onChange={(e) => setSalary(Number(e.target.value))}
-                />
-              </div>
-
-              <div className="w-full flex flex-col gap-1">
                 <p className="text-sm">VR gasto por dia:</p>
                 <input
-                  type="text"
+                  type="numeric"
+                  pattern="[0-9]*"
                   placeholder="VR"
                   className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  defaultValue={row?.vrPerDay ? row.vrPerDay : 0.0}
-                  onChange={(e) => setVr(Number(e.target.value))}
+                  defaultValue={row?.vrPerDay ?? 0.0}
+                  value={formatCurrency(vr)}
+                  onChange={handleVrChange}
                 />
               </div>
             </div>
@@ -425,6 +468,71 @@ export default function FuncionariosPage() {
               <p>Sem Dados</p>
             </div>
           )}
+        </ModalBase>
+
+        <ModalBase
+          title="Cadastrar Funcionário"
+          actionButton="Cadastrar"
+          open={openModalCreate}
+          onClose={closeModalEdit}
+          onSend={handleCreateEmployee}
+          isFetching={loading}
+        >
+          <div className="flex flex-col gap-4">
+            <div className="w-full flex flex-col gap-1">
+              <p className="text-sm">Código do Funcionário:</p>
+              <input
+                type="text"
+                placeholder="Nome"
+                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => setCodeEmployee(e.target.value)}
+              />
+            </div>
+            <div className="w-full flex flex-col gap-1">
+              <p className="text-sm">Nome:</p>
+              <input
+                type="text"
+                placeholder="Nome"
+                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => setNameEmployee(e.target.value)}
+              />
+            </div>
+            <div className="w-full flex flex-col gap-1">
+              <p className="text-sm">Compania:</p>
+              <select
+                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={selectedCompanyRow || ""}
+                onChange={(e) => setSelectedCompanyRow(Number(e.target.value))}
+              >
+                <option value="">Selecione uma compania</option>
+                {company?.data?.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="w-full flex flex-col gap-1">
+              <p className="text-sm">Ocupação:</p>
+              <input
+                type="text"
+                placeholder="Ocupação"
+                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => setJobDescription(e.target.value)}
+              />
+            </div>
+
+            <div className="w-full flex flex-col gap-1">
+              <p className="text-sm">VR gasto por dia:</p>
+              <input
+                type="text"
+                placeholder="VR"
+                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={formatCurrency(vr)}
+                onChange={handleVrChange}
+              />
+            </div>
+          </div>
         </ModalBase>
 
         <ModalBase
@@ -529,6 +637,78 @@ export default function FuncionariosPage() {
             />{" "}
             <span>Possui atestado</span>
           </div>
+
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => setOpenModalListAbsences(true)}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-md text-sm"
+            >
+              Ver Faltas Existentes
+            </button>
+          </div>
+        </ModalBase>
+
+        <ModalBase
+          title={`Faltas de ${row?.name} no mês`}
+          open={openModalListAbsences}
+          onClose={() => setOpenModalListAbsences(false)}
+          isFetching={isLoadingViewerAbsence}
+        >
+          <div
+            className="max-h-64 overflow-y-auto space-y-2 
+  scrollbar-thin scrollbar-thumb-muted-foreground scrollbar-track-muted"
+          >
+            {absenceDate?.data && absenceDate?.data.length > 0 ? (
+              <div className="max-h-64 overflow-y-auto space-y-2 pr-1">
+                {absenceDate.data.map((item) => (
+                  <div
+                    key={item.id}
+                    className="p-3 border border-border rounded-md flex items-center justify-between bg-muted"
+                  >
+                    <div className="flex flex-col">
+                      <p className="text-sm text-foreground">
+                        {new Date(item.absence_date).toLocaleDateString(
+                          "pt-BR"
+                        )}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {item.certificate_absence ? "Atestado" : "Sem atestado"}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        deleteAbsenceMutation.mutate(item.id, {
+                          onSuccess: () => {
+                            showToast("Falta deletada com sucesso", "success");
+                            queryCliente.invalidateQueries({
+                              queryKey: [
+                                ReactQueryKeysEnum.FIND_BY_CODE_EMPLOYEE_AND_DATE,
+                              ],
+                            });
+                            queryCliente.invalidateQueries({
+                              queryKey: [ReactQueryKeysEnum.EMPLOYEE_FINDALL],
+                            });
+                          },
+                          onError: () => {
+                            showToast("Erro ao deletar falta", "error");
+                          },
+                        });
+                      }}
+                      className="text-red-500 hover:text-red-400 transition-colors"
+                      title="Deletar falta"
+                    >
+                      <Icons name="BsTrash" size={18} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Sem faltas registradas.
+              </p>
+            )}
+          </div>
         </ModalBase>
 
         <div
@@ -549,28 +729,33 @@ export default function FuncionariosPage() {
               gap: "10px",
             }}
           >
-            <button
-              style={{
-                padding: "8px",
-                backgroundColor: "green",
-                color: "white",
-                borderRadius: "8px",
-              }}
-              onClick={handleAddPdf}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "10px",
-                }}
+            <div className="flex justify-end mb-4 px-4 mt-5 gap-4">
+              <button
+                onClick={handleAddPdf}
+                className="flex items-center gap-2 rounded-md bg-green-600 hover:bg-green-700 dark:bg-emerald-700 px-4 py-2 font-semibold text-white dark:hover:bg-emerald-800 transition-all"
               >
-                <p style={{ fontWeight: "bold" }}>PDF</p>
+                <Icons name="ImFilePdf" size={20} />
+                PDF
+              </button>
+
+              <button
+                onClick={() => {
+                  setRow(undefined);
+                  setNameEmployee("");
+                  setJobDescription("");
+                  setSelectedCompanyRow(null);
+                  setSalary(0);
+                  setVr(0);
+                  setOpenModalCreate(true);
+                }}
+                className="flex items-center gap-2 rounded-md bg-blue-600 hover:bg-blue-700 dark:bg-gray-700 px-4 py-2 font-semibold text-white dark:hover:bg-gray-800 transition-all"
+              >
                 <Icons name="MdOutlineAddCircle" size={20} />
-              </div>
-            </button>
+                Cadastrar Funcionário
+              </button>
+            </div>
           </div>
+
           <DataTable<EmployeeResponseType>
             data={data?.data}
             totalPages={data?.totalPages}
@@ -592,6 +777,13 @@ export default function FuncionariosPage() {
               vtPerDay: "Total VT por dia",
               vrTotal: "Total VR",
               vrPerDay: "VR por dia",
+            }}
+            customRender={{
+              vtTotal: (value) => formatCurrency(value),
+              vtPerDay: (value) => formatCurrency(value),
+              vrTotal: (value) => formatCurrency(value),
+              vrPerDay: (value) => formatCurrency(value),
+              salary: (value) => formatCurrency(value),
             }}
             onNextPageClick={() => setPage((page) => page + 1)}
             onBackPageClick={() => setPage((page) => page - 1)}

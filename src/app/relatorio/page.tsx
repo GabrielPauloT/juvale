@@ -34,15 +34,15 @@ export default function RelatorioPage() {
     () => [
       {
         id: 1,
-        name: "Relatório de Gastos por Empresa",
+        name: "Relatório de Gastos por Empresa - Mensal",
       },
       {
         id: 2,
-        name: "Relatório de Gastos por Funcionário",
+        name: "Relatório de Gastos por Funcionário - Mensal",
       },
       {
         id: 3,
-        name: "Relatório de Gastos por Funcionário (com Faltas)",
+        name: "Relatório de Gastos por Funcionário (com Faltas) - Mensal",
       },
     ],
     []

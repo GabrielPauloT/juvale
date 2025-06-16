@@ -21,6 +21,7 @@ export function DataTable<T extends Record<string, any>>({
   searchValue,
   onChangeSearchValue,
   onAddTicketClick,
+  customRender,
 }: DataTableProps<T>) {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -49,10 +50,15 @@ export function DataTable<T extends Record<string, any>>({
   }, [data, hiddenFields, onlyFields]);
 
   const getValue = (row: any, key: string) => {
-    if (key.includes(".")) {
-      return key.split(".").reduce((obj, part) => obj?.[part], row);
+    const rawValue = key.includes(".")
+      ? key.split(".").reduce((obj, part) => obj?.[part], row)
+      : row[key];
+
+    if (customRender?.[key]) {
+      return customRender[key](rawValue, row);
     }
-    return row[key];
+
+    return rawValue;
   };
 
   const getLabel = (key: string) => {

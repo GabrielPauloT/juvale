@@ -1,10 +1,14 @@
 import { ReactQueryKeysEnum } from "@/@types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { EmployeerRequest } from "../requests";
-import { findAllEmployeersRequestType, updateEmployeeType } from "../types/employee";
+import {
+  CreateEmployeeType,
+  FindAllEmployeersRequestType,
+  UpdateEmployeeType,
+} from "../types/employee";
 import { deleteEmployee, updateEmployee } from "../requests/EmployeeRequest";
 
-export function UseEmployee(findAllEmployeers: findAllEmployeersRequestType) {
+export function UseEmployee(findAllEmployeers: FindAllEmployeersRequestType) {
   return useQuery({
     queryKey: [
       ReactQueryKeysEnum.EMPLOYEE_FINDALL,
@@ -12,7 +16,7 @@ export function UseEmployee(findAllEmployeers: findAllEmployeersRequestType) {
       findAllEmployeers.perPage,
       findAllEmployeers.companyId,
       findAllEmployeers.name,
-      findAllEmployeers.date
+      findAllEmployeers.date,
     ],
     queryFn: async () => {
       const { data } = await EmployeerRequest.findAllEmployeers(
@@ -36,7 +40,21 @@ export function useDeleteEmployee() {
 
 export function useEditEmployee() {
   const mutation = useMutation({
-    mutationFn: ({codeEmployee, data} : {codeEmployee: string, data: updateEmployeeType}) => updateEmployee(codeEmployee, data),
+    mutationFn: ({
+      codeEmployee,
+      data,
+    }: {
+      codeEmployee: string;
+      data: UpdateEmployeeType;
+    }) => updateEmployee(codeEmployee, data),
+  });
+  return mutation;
+}
+
+export function useCreateEmployee() {
+  const mutation = useMutation({
+    mutationFn: ({ data }: { data: CreateEmployeeType }) =>
+      EmployeerRequest.createEmployee(data),
   });
   return mutation;
 }
