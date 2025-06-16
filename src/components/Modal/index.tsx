@@ -42,14 +42,12 @@ export function Modal({ onClose, open, infos, action }: ModalProps) {
               />
             </div>
             <div className="w-full flex flex-col gap-1">
-              <p className="text-sm">Compania:</p>
+              <p className="text-sm">Empresa:</p>
               <input
                 type="text"
-                placeholder="Compania"
+                placeholder="Empresa"
                 className="border border-black p-1 rounded-sm outline-none"
-                defaultValue={
-                  infos.Compania ? infos.Compania : "{sem Compania}"
-                }
+                defaultValue={infos.Compania ? infos.Compania : "{sem Empresa}"}
               />
             </div>
             <div className="w-full flex flex-col gap-1">

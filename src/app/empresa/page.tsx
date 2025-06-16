@@ -16,7 +16,7 @@ import {
   useEditCompany,
 } from "@/service/hooks/CompanyQuery";
 
-export default function CompaniaPage() {
+export default function CompanyPage() {
   const queryCliente = useQueryClient();
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [openModalCreate, setOpenModalCreate] = useState(false);
@@ -59,7 +59,7 @@ export default function CompaniaPage() {
           name: name,
         })
         .then(() => {
-          showToast("Compania atualizado com sucesso", "success");
+          showToast("Empresa atualizado com sucesso", "success");
           queryCliente.invalidateQueries({
             queryKey: [ReactQueryKeysEnum.USE_COMPANY_FIND_ALL],
           });
@@ -68,7 +68,7 @@ export default function CompaniaPage() {
           }
         })
         .catch(() => {
-          showToast("Erro ao atualizar usuário", "error");
+          showToast("Erro ao atualizar empresa", "error");
         })
         .finally(() => {
           setOpenModalEdit(false);
@@ -84,7 +84,7 @@ export default function CompaniaPage() {
         name: name,
       })
       .then(() => {
-        showToast("Compania criado com sucesso", "success");
+        showToast("Empresa criada com sucesso", "success");
         queryCliente.invalidateQueries({
           queryKey: [ReactQueryKeysEnum.USE_COMPANY_FIND_ALL],
         });
@@ -93,7 +93,7 @@ export default function CompaniaPage() {
         }
       })
       .catch(() => {
-        showToast("Erro ao criar usuário", "error");
+        showToast("Erro ao criar empresa", "error");
       })
       .finally(() => {
         setOpenModalCreate(false);
@@ -107,7 +107,7 @@ export default function CompaniaPage() {
       deleteCompanyMutation
         .mutateAsync(row.id)
         .then(() => {
-          showToast("Compania deletado com sucesso", "success");
+          showToast("Empresa deletado com sucesso", "success");
           queryCliente.invalidateQueries({
             queryKey: [ReactQueryKeysEnum.USE_COMPANY_FIND_ALL],
           });
@@ -116,7 +116,7 @@ export default function CompaniaPage() {
           }
         })
         .catch(() => {
-          showToast("Erro ao deletar usuário", "error");
+          showToast("Erro ao deletar empresa", "error");
         })
         .finally(() => {
           setOpenModalDelete(false);
@@ -143,7 +143,7 @@ export default function CompaniaPage() {
 
   return (
     <>
-      <Layout pageTitle="Companias">
+      <Layout pageTitle="Empresas">
         <div className="mt-2">
           <div className="flex justify-end mb-4 px-4 mt-5">
             <button
@@ -154,7 +154,7 @@ export default function CompaniaPage() {
               }}
               className="flex items-center gap-2 rounded-md bg-blue-600 hover:bg-blue-700 dark:bg-gray-700 px-4 py-2 font-semibold text-white dark:hover:bg-gray-800 transition-all"
             >
-              <span>➕</span> Criar Compania
+              <span>➕</span> Criar Empresa
             </button>
           </div>
           <DataTable<findAllCompanyResponseType>
@@ -182,7 +182,7 @@ export default function CompaniaPage() {
         </div>
       </Layout>
       <ModalBase
-        title="Atualizar Compania"
+        title="Atualizar Empresa"
         actionButton="Atualizar"
         open={openModalEdit}
         onClose={() => setOpenModalEdit(false)}
@@ -209,7 +209,7 @@ export default function CompaniaPage() {
         )}
       </ModalBase>
       <ModalBase
-        title="Cadastrar Compania"
+        title="Cadastrar Empresa"
         actionButton="Cadastrar"
         open={openModalCreate}
         onClose={() => setOpenModalCreate(false)}
@@ -230,7 +230,7 @@ export default function CompaniaPage() {
         </div>
       </ModalBase>
       <ModalBase
-        title="Deletar Compania"
+        title="Deletar Empresa"
         actionButton="Deletar"
         open={openModalDelete}
         onClose={() => setOpenModalDelete(false)}
