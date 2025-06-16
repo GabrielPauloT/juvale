@@ -31,7 +31,7 @@ export const SidebarMenu: MenuProps[] = [
     title: "Companias",
     icon: "HiBuildingOffice",
     path: "/compania",
-    roles: [roleEnum.admin],
+    roles: [roleEnum.user, roleEnum.admin],
   },
   {
     id: 7,
