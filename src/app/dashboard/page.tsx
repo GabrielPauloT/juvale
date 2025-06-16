@@ -5,6 +5,7 @@ import { Layout } from "@/components/Layout";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import { useCompanyEemployeeCost } from "@/service/hooks/CompanyQuery";
+import { formatCurrency } from "@/utils/currency";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -110,6 +111,15 @@ export default function DashboardPage() {
                           color: "rgb(156, 163, 175)",
                         },
                       },
+                      tooltip: {
+                        callbacks: {
+                          label: (tooltipItem) => {
+                            const label = tooltipItem.label || "";
+                            const value = tooltipItem.raw as number;
+                            return `${label}: ${value} funcionário(s)`;
+                          },
+                        },
+                      },
                     },
                   }}
                 />
@@ -133,6 +143,15 @@ export default function DashboardPage() {
                           color: "rgb(156, 163, 175)",
                         },
                       },
+                      tooltip: {
+                        callbacks: {
+                          label: (tooltipItem) => {
+                            const label = tooltipItem.label || "";
+                            const value = tooltipItem.raw as number;
+                            return `${label}: ${formatCurrency(value)}`;
+                          },
+                        },
+                      },
                     },
                   }}
                 />
@@ -152,6 +171,15 @@ export default function DashboardPage() {
                       legend: {
                         labels: {
                           color: "rgb(156, 163, 175)",
+                        },
+                      },
+                      tooltip: {
+                        callbacks: {
+                          label: (tooltipItem) => {
+                            const label = tooltipItem.label || "";
+                            const value = tooltipItem.raw as number;
+                            return `${label}: ${formatCurrency(value)}`;
+                          },
                         },
                       },
                     },

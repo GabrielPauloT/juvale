@@ -1,4 +1,4 @@
-import { SetStateAction } from "react";
+import { JSX, SetStateAction } from "react";
 
 export type DataTableProps<T> = Readonly<{
   data: T[] | undefined;
@@ -7,6 +7,11 @@ export type DataTableProps<T> = Readonly<{
   hiddenFields?: (keyof T | string)[];
   onlyFields?: (keyof T | string)[];
   columnLabels?: Record<string, string>;
+  customRender?: Record<
+    string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (value: any, row: T) => string | number | JSX.Element
+  >;
   onNextPageClick?: () => void;
   onBackPageClick?: () => void;
   onEditClick?: (row: T) => void;

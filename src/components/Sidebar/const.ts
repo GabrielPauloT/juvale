@@ -28,6 +28,14 @@ export const SidebarMenu: MenuProps[] = [
   {
     id: 6,
     setter: () => {},
+    title: "Companias",
+    icon: "HiBuildingOffice",
+    path: "/compania",
+    roles: [roleEnum.admin],
+  },
+  {
+    id: 7,
+    setter: () => {},
     title: "Relatório",
     icon: "MdReport",
     path: "/relatorio",

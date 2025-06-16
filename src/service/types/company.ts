@@ -10,13 +10,18 @@ export type FindCompanyEmployeeCostResponseType = {
 };
 
 export type findAllCompanyResponseType = {
-			id: number,
-			name: string,
-			created_at: string,
-			last_modified: string | null
-}
+  id: number;
+  name: string;
+  created_at: string;
+  last_modified: string | null;
+};
 
 export type findAllCompanyRequestType = {
-			page: number,
-      perPage: number
-}
+  page: number;
+  perPage: number;
+  name?: string;
+};
+
+export type CreateCompanyRequestType = {
+  name: string;
+};

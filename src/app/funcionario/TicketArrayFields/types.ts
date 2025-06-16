@@ -1,8 +1,8 @@
-import { reponseTicket } from "@/service/types/employee";
+import { ReponseTicket } from "@/service/types/employee";
 
 export type TicketArrayFieldsProps = {
   codeEmployee: string;
-  data: reponseTicket[] | undefined;
+  data: ReponseTicket[] | undefined;
   onChange?: (tickets: requestTicket[]) => void;
 };
 
