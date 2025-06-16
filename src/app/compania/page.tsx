@@ -163,7 +163,7 @@ export default function CompaniaPage() {
             data={data?.data}
             totalPages={data?.totalPages}
             page={page}
-            hiddenFields={["created_at", "last_modified", "id"]}
+            hiddenFields={["created_at", "last_modified", "id", "enabled"]}
             onNextPageClick={() => setPage((page) => page + 1)}
             onBackPageClick={() => setPage((page) => page - 1)}
             onEditClick={(row) => {
