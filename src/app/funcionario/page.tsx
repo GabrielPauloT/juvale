@@ -26,7 +26,13 @@ import { useInactivePDF, useUploadPDF } from "@/service/hooks/UsePdf";
 import { useCreateTicket } from "@/service/hooks/UseTicket";
 import { Toast } from "@/components/Toast";
 import { UseAbsence } from "@/service/hooks";
+import { customAlphabet } from "nanoid";
 import { formatCurrency } from "@/utils/currency";
+
+const generateCodigo = customAlphabet(
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+  6
+);
 
 export default function FuncionariosPage() {
   const queryCliente = useQueryClient();
@@ -81,6 +87,7 @@ export default function FuncionariosPage() {
   const [certificateAbsence, setCertificateAbsence] = useState(false);
   const [addFuncionario, setAddFuncionario] = useState(false);
   const [pdf, setPdf] = useState<File>();
+
   const [toast, setToast] = useState<
     { type: "success" | "error"; message: string } | undefined
   >();
@@ -89,10 +96,14 @@ export default function FuncionariosPage() {
     setToast({ type, message });
   };
 
+  const handleGenerateCodigo = () => {
+    const randomCode = generateCodigo();
+    setCodeEmployee(randomCode);
+  };
+
   const [selectedCompanyRow, setSelectedCompanyRow] = useState<number | null>(
     null
   );
-
   const [loading, setIsLoading] = useState(false);
 
   const handleVrChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -479,14 +490,31 @@ export default function FuncionariosPage() {
           isFetching={loading}
         >
           <div className="flex flex-col gap-4">
-            <div className="w-full flex flex-col gap-1">
-              <p className="text-sm">Código do Funcionário:</p>
-              <input
-                type="text"
-                placeholder="Nome"
-                className="px-3 py-1 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onChange={(e) => setCodeEmployee(e.target.value)}
-              />
+            <div className="w-full flex flex-col gap-2">
+              <label
+                htmlFor="codeEmployee"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Código do Funcionário:
+              </label>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  id="codeEmployee"
+                  type="text"
+                  required
+                  className="flex-1 px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Ex: 000123"
+                  value={codeEmployee}
+                  onChange={(e) => setCodeEmployee(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={handleGenerateCodigo}
+                  className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  Gerar Código
+                </button>
+              </div>
             </div>
             <div className="w-full flex flex-col gap-1">
               <p className="text-sm">Nome:</p>
